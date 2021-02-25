@@ -21,19 +21,64 @@
     </style>
   </head>
   <body>
+    <style>
+    #menu {
+    background: #fff;
+    position: absolute;
+    z-index: 1;
+    top: 10px;
+    right: 10px;
+    border-radius: 3px;
+    width: 120px;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    font-family: 'Open Sans', sans-serif;
+    }
+
+    #menu a {
+    font-size: 13px;
+    color: #404040;
+    display: block;
+    margin: 0;
+    padding: 0;
+    padding: 10px;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    text-align: center;
+    }
+
+    #menu a:last-child {
+    border: none;
+    }
+
+    #menu a:hover {
+    background-color: #f8f8f8;
+    color: #404040;
+    }
+
+    #menu a.active {
+    background-color: #3887be;
+    color: #ffffff;
+    }
+
+    #menu a.active:hover {
+    background: #3074a4;
+    }
+    </style>
+
+    <nav id="menu"></nav>
     <div id='map'></div>
     <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoienVtb2RlbHN1ciIsImEiOiJja2k0Z2Z2c2owOGlrMnFwYnR6aWgwYTRxIn0.fl4HqrLZncNLTtGhsK4P2w'; // replace this with your access token
     var map = new mapboxgl.Map({
       container: 'map',
-      style: 'mapbox://styles/zumodelsur/cklku2gxg1rmn17ms8akf8j1v/draft', // replace this with your style URL
+      style: 'mapbox://styles/zumodelsur/ckll2fjxo0rs917ln82u42j3l', // replace this with your style URL
       center: [-5, 39],
       zoom: 4.26
     });
     // code from the next step will go here
       map.on('click', function(e) {
     var features = map.queryRenderedFeatures(e.point, {
-      layers: ['Stations'] // replace this with the name of the layer
+      layers: ['prec'] // replace this with the name of the layer
     });
 
     if (!features.length) {
@@ -44,20 +89,208 @@
 
     var popup = new mapboxgl.Popup({ offset: [0, -15] })
       .setLngLat(feature.geometry.coordinates)
-      .setHTML('<h3>' + feature.properties.name + '</h3>')
+      .setHTML('<h3>' + feature.properties.name + '</h3>' + '<br>' + 'prec:' + feature.properties.prec + 'mm' )
       .addTo(map);
       });
+
 
 map.on('load', function () {
 var url = 'https://dargueso.github.io/webhourlydata/AEMET.geojson';
 map.addSource('AEMET', { type: 'geojson', data: url});
 map.addLayer({
-'id': 'AEMET',
+'id': 'prec',
 'type': 'circle',
 'source': 'AEMET',
+'layout': {
+                // make layer invisible by default
+                'visibility': 'none'
+            },
 'paint': {
-'circle-radius': 20,
-'circle-color': '#B42222'
+    "circle-color": [
+        "interpolate",
+        ["exponential", 1],
+        ["get", "prec"],
+        0,
+        "hsl(58, 80%, 61%)",
+        1,
+        "hsl(73, 65%, 62%)",
+        2,
+        "hsl(93, 43%, 62%)",
+        5,
+        "hsl(134, 21%, 56%)",
+        10,
+        "hsl(198, 21%, 45%)",
+        20,
+        "hsl(232, 32%, 38%)",
+        30,
+        "hsl(266, 85%, 21%)"
+    ],
+    "circle-opacity": 0.8,
+    "circle-radius": [
+        "interpolate",
+        ["linear"],
+        ["zoom"],
+        0,
+        8,
+        5,
+        9,
+        10,
+        11.5,
+        22,
+        16.2
+    ],
+    "circle-stroke-color": [
+        "interpolate",
+        ["exponential", 1],
+        ["get", "prec"],
+        0,
+        "hsl(58, 80%, 43%)",
+        1,
+        "hsl(73, 65%, 43%)",
+        2,
+        "hsl(93, 43%, 43%)",
+        5,
+        "hsl(134, 21%, 39%)",
+        10,
+        "hsl(198, 21%, 32%)",
+        20,
+        "hsl(232, 32%, 27%)",
+        30,
+        "hsl(266, 85%, 15%)"
+    ],
+    "circle-stroke-width": 0.75
+},
+'filter': ['==', '$type', 'Point']
+});
+
+map.addLayer({
+'id': 'tmax',
+'type': 'circle',
+'source': 'AEMET',
+'layout': {
+                // make layer invisible by default
+                'visibility': 'none'
+            },
+'paint': {
+    "circle-color": [
+        "interpolate",
+        ["exponential", 1],
+        ["get", "tmax"],
+                    0,
+                    "hsl(63, 95%, 54%)",
+                    5,
+                    "hsl(51, 93%, 55%)",
+                    10,
+                    "hsl(40, 96%, 58%)",
+                    15,
+                    "hsl(29, 96%, 59%)",
+                    20,
+                    "hsl(20, 85%, 60%)",
+                    25,
+                    "hsl(7, 71%, 61%)",
+                    30,
+                    "hsl(351, 60%, 56%)"
+    ],
+    "circle-opacity": 0.8,
+    "circle-radius": [
+        "interpolate",
+        ["linear"],
+        ["zoom"],
+        0,
+        8,
+        5,
+        9,
+        10,
+        11.5,
+        22,
+        16.2
+    ],
+    "circle-stroke-color": [
+        "interpolate",
+        ["exponential", 1],
+        ["get", "tmax"],
+                    0,
+                    "hsl(63, 95%, 38%)",
+                    5,
+                    "hsl(51, 93%, 39%)",
+                    10,
+                    "hsl(40, 96%, 41%)",
+                    15,
+                    "hsl(29, 96%, 41%)",
+                    20,
+                    "hsl(20, 85%, 42%)",
+                    25,
+                    "hsl(7, 71%, 43%)",
+                    30,
+                    "hsl(351, 60%, 39%)"
+    ],
+    "circle-stroke-width": 0.75
+},
+'filter': ['==', '$type', 'Point']
+});
+
+map.addLayer({
+'id': 'tmin',
+'type': 'circle',
+'source': 'AEMET',
+'layout': {
+                // make layer invisible by default
+                'visibility': 'none'
+            },
+'paint': {
+    "circle-color": [
+        "interpolate",
+        ["exponential", 1],
+        ["get", "tmin"],
+                    -5,
+                    "hsl(279, 100%, 22%)",
+                    0,
+                    "hsl(304, 63%, 25%)",
+                    5,
+                    "hsl(333, 45%, 35%)",
+                    10,
+                    "hsl(5, 56%, 43%)",
+                    15,
+                    "hsl(30, 77%, 43%)",
+                    20,
+                    "hsl(47, 88%, 41%)",
+                    25,
+                    "hsl(63, 95%, 38%)"
+    ],
+    "circle-opacity": 0.8,
+    "circle-radius": [
+        "interpolate",
+        ["linear"],
+        ["zoom"],
+        0,
+        8,
+        5,
+        9,
+        10,
+        11.5,
+        22,
+        16.2
+    ],
+    "circle-stroke-color": [
+        "interpolate",
+        ["exponential", 1],
+        ["get", "tmin"],
+                    -5,
+                    "hsl(279, 100%, 22%)",
+                    0,
+                    "hsl(304, 63%, 25%)",
+                    5,
+                    "hsl(333, 45%, 35%)",
+                    10,
+                    "hsl(5, 56%, 43%)",
+                    15,
+                    "hsl(30, 77%, 43%)",
+                    20,
+                    "hsl(47, 88%, 41%)",
+                    25,
+                    "hsl(63, 95%, 38%)"
+    ],
+    "circle-stroke-width": 0.75
 },
 'filter': ['==', '$type', 'Point']
 });
@@ -65,17 +298,74 @@ map.addLayer({
 
 
 
-    //
-    // map.addSource('AEMETdata', { type: 'geojson', data: https://meteorologia.uib.es/hoyextremo/AEMET.geojson});
-    // map.addLayer({
-    //   'id': 'AEMETdata',
-    //   'type': 'symbol',
-    //   'source': 'AEMETdata',
-    //   'layout': {
-    //           'icon-image': 'rocket-15'
-    //           'icon-allow-overlap': true,}
-    //           });
+// enumerate ids of the layers
+var toggleableLayerIds = ['tmax','tmin', 'prec'];
 
+// set up the corresponding toggle button for each layer
+for (var i = 0; i < toggleableLayerIds.length; i++) {
+var id = toggleableLayerIds[i];
+
+var link = document.createElement('a');
+link.href = '#';
+link.className = '';
+link.textContent = id;
+
+link.onclick = function(e) {
+  var clickedLayer = this.textContent;
+  e.preventDefault();
+  e.stopPropagation();
+  for (var j = 0; j < toggleableLayerIds.length; j++) {
+    if (clickedLayer === toggleableLayerIds[j]) {
+      layers.children[j].className = 'active';
+      map.setLayoutProperty(toggleableLayerIds[j], 'visibility', 'visible');
+    }
+    else {
+      layers.children[j].className = '';
+      map.setLayoutProperty(toggleableLayerIds[j], 'visibility', 'none');
+    }
+  }
+};
+
+// link.onclick = function (e) {
+// var clickedLayer = this.textContent;
+// e.preventDefault();
+// e.stopPropagation();
+//
+// var visibility = map.getLayoutProperty(clickedLayer, 'visibility');
+//
+// // toggle layer visibility by changing the layout object's visibility property
+// if (visibility === 'visible') {
+// map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+// this.className = '';
+// } else {
+// this.className = 'active';
+// map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
+// }
+// };
+
+var layers = document.getElementById('menu');
+layers.appendChild(link);
+}
     </script>
   </body>
 </html>
+
+<!-- // Create the popup
+map.on('click', 'turnstileData', function (e) {
+    var entriesDiff = e.features[0].properties.ENTRIES_DIFF;
+    var entries_06 = e.features[0].properties.ENTRIES_06;
+    var entries_20 = e.features[0].properties.ENTRIES_20;
+    var stationName = e.features[0].properties.stationName;
+    new mapboxgl.Popup()
+        .setLngLat(e.lngLat)
+        .setHTML(stationName + '<br>' + entriesDiff + '%' + '<br>' + entries_06 + '<br>' + entries_20)
+        .addTo(map);
+});
+// Change the cursor to a pointer when the mouse is over the turnstileData layer.
+map.on('mouseenter', 'turnstileData', function () {
+    map.getCanvas().style.cursor = 'pointer';
+});
+// Change it back to a pointer when it leaves.
+map.on('mouseleave', 'turnstileData', function () {
+    map.getCanvas().style.cursor = '';
+}); -->
