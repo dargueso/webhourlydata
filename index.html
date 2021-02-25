@@ -94,6 +94,44 @@
       });
 
 
+        // code from the next step will go here
+          map.on('click', function(e) {
+        var features = map.queryRenderedFeatures(e.point, {
+          layers: ['tmax'] // replace this with the name of the layer
+        });
+
+        if (!features.length) {
+          return;
+        }
+
+        var feature = features[0];
+
+        var popup = new mapboxgl.Popup({ offset: [0, -15] })
+          .setLngLat(feature.geometry.coordinates)
+          .setHTML('<h3>' + feature.properties.name + '</h3>' + '<br>' + 'tmax:' + feature.properties.tmax + '&#176C' )
+          .addTo(map);
+          });
+
+        // code from the next step will go here
+          map.on('click', function(e) {
+        var features = map.queryRenderedFeatures(e.point, {
+          layers: ['tmin'] // replace this with the name of the layer
+        });
+
+        if (!features.length) {
+          return;
+        }
+
+        var feature = features[0];
+
+        var popup = new mapboxgl.Popup({ offset: [0, -15] })
+          .setLngLat(feature.geometry.coordinates)
+          .setHTML('<h3>' + feature.properties.name + '</h3>' + '<br>' + 'tmin:' + feature.properties.tmin + '&#176C' )
+          .addTo(map);
+          });
+
+
+
 map.on('load', function () {
 var url = 'https://dargueso.github.io/webhourlydata/AEMET.geojson';
 map.addSource('AEMET', { type: 'geojson', data: url});
