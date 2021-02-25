@@ -1,0 +1,1 @@
+{"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "Point", "coordinates": [2.736666, 39.56083]}, "properties": {"tmax": 19.4, "tmin": 4.9, "prec": 0.0, "name": "PALMA DE MALLORCA/SON SANT JOAN", "stn_id": "B278"}}]}
