@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset='utf-8' />
-    <title>Points on a map</title>
+    <title>Last 24-h weather in Spain</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css' rel='stylesheet' />
@@ -129,7 +129,24 @@
 .mapboxgl-popup-anchor-top > .mapboxgl-popup-tip {
   border-bottom-color: #91c949;
 }
+.title {
 
+	opacity: 90%;
+	border-radius: 1em;
+	top: 5em;
+	font: .8em/.9em 'Impact', sans-serif;
+	position: absolute;
+	max-width: 25%;
+	margin: 0em 5em;
+	z-index: 100;
+}
+.title h1{
+  color: #fff;
+  font-weight: 900;
+  line-height: 1em;
+  font-size:40px;
+	opacity: 100%;
+}
 .legend {
   color: #fff;
   font: 1em/1.5em 'Open Sans', sans-serif;
@@ -230,7 +247,7 @@
         <div><span style="background-color: #090858"></span><p>40</p></div>
         <div><span style="background-color: #261061"></span><p>50</p></div>
     </div>
-    <div  id="hrmean-legend" class="legend">
+    <div  id="rel hum-legend" class="legend">
         <h4>Relative Hum (%)</h4>
         <div><span style="background-color: #ffffd9"></span><p>0</p></div>
         <div><span style="background-color: #f1faba"></span><p>10</p></div>
@@ -277,10 +294,48 @@
         <div><span style="background-color: #9e0142"></span><p>14</p></div>
     </div>
 
+        <div id="max wind-legend" class="legend">
+            <h4>Max wind (km/h)</h4>
+            <div><span style="background-color: #5e4fa2"></span><p>0</p></div>
+            <div><span style="background-color: #3880b9"></span><p>5</p></div>
+            <div><span style="background-color: #58b2ac"></span><p>10</p></div>
+            <div><span style="background-color: #8fd2a4"></span><p>15</p></div>
+            <div><span style="background-color: #c6e89f"></span><p>20</p></div>
+            <div><span style="background-color: #eef8a4"></span><p>25</p></div>
+            <div><span style="background-color: #fff8b4"></span><p>30</p></div>
+            <div><span style="background-color: #fedc88"></span><p>35</p></div>
+            <div><span style="background-color: #fdb163"></span><p>40</p></div>
+            <div><span style="background-color: #f67a49"></span><p>50</p></div>
+            <div><span style="background-color: #df4e4b"></span><p>60</p></div>
+            <div><span style="background-color: #b81e48"></span><p>70</p></div>
+            <div><span style="background-color: #9e0142"></span><p>80</p></div>
+
+        </div>
+
+        <div id="mean wind-legend" class="legend">
+            <h4>Mean wind (km/h)</h4>
+            <div><span style="background-color: #5e4fa2"></span><p>0</p></div>
+            <div><span style="background-color: #3880b9"></span><p>2</p></div>
+            <div><span style="background-color: #58b2ac"></span><p>4</p></div>
+            <div><span style="background-color: #8fd2a4"></span><p>6</p></div>
+            <div><span style="background-color: #c6e89f"></span><p>8</p></div>
+            <div><span style="background-color: #eef8a4"></span><p>10</p></div>
+            <div><span style="background-color: #fff8b4"></span><p>12</p></div>
+            <div><span style="background-color: #fedc88"></span><p>14</p></div>
+            <div><span style="background-color: #fdb163"></span><p>16</p></div>
+            <div><span style="background-color: #f67a49"></span><p>18</p></div>
+            <div><span style="background-color: #df4e4b"></span><p>20</p></div>
+            <div><span style="background-color: #b81e48"></span><p>25</p></div>
+            <div><span style="background-color: #9e0142"></span><p>30</p></div>
+
+        </div>
+
     </div>
 
 
-
+        <div id='title' class="title">
+        <h1>Last 24-h weather in Spain</h1>
+    </div>
 
 
     <script>
@@ -294,7 +349,7 @@
     // code from the next step will go here
       map.on('click', function(e) {
     var features = map.queryRenderedFeatures(e.point, {
-      layers: ['prec','tmax','tmin','hrmean'] // replace this with the name of the layer
+      layers: ['prec','tmax','tmin','rel hum','max wind','mean wind'] // replace this with the name of the layer
     });
 
     if (!features.length) {
@@ -309,6 +364,8 @@
        + '<br>' + 'tmax: ' + feature.properties.tmax + '&#176C'
        + '<br>' + 'tmin: ' + feature.properties.tmin + '&#176C'
        + '<br>' + 'rel. hum.: ' + feature.properties.hrmean + '%'
+        + '<br>' + 'max wind spd: ' + feature.properties.vmax + 'km/h'
+        + '<br>' + 'mean wind spd: ' + feature.properties.vvmean + 'km/h'
        + '<br>' + "<p style='font-size: 10px;'>"+ 'last update: ' + feature.properties.last_update +"</p>")
       .addTo(map);
       });
@@ -319,6 +376,109 @@
 map.on('load', function () {
 var url = 'https://dargueso.github.io/webhourlydata/AEMET.geojson';
 map.addSource('AEMET', { type: 'geojson', data: url});
+
+map.loadImage('https://dargueso.github.io/webhourlydata/wind-arrow_south.png', function(error, image) {
+  if (error) throw error;
+  // add image to the active style and make it SDF-enabled
+  map.addImage('wind-arrow2', image, { sdf: true });
+});
+map.addLayer({
+'id': 'max wind',
+'type': 'symbol',
+'source': 'AEMET',
+'layout': {
+                "icon-image": "wind-arrow2",// make layer invisible by default
+                'visibility': 'none',
+                'icon-allow-overlap': true,
+                "icon-rotate": ["get", "dmax"],
+                'icon-size': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    0,
+                    0.02,
+                    0.06,
+                    0.09,
+                    0.12,
+                    0.15,
+                    0.24,
+                    0.5,
+                ],
+            },
+'paint': {
+    'icon-opacity': 1,
+    'icon-color':  [
+             "interpolate",
+            ["exponential", 1],
+            ["get", "vmax"],
+0,  '#5e4fa2',
+5,  '#3880b9',
+10, '#58b2ac',
+15, '#8fd2a4',
+20, '#c6e89f',
+25, '#eef8a4',
+30, '#fff8b4',
+35, '#fedc88',
+40, '#fdb163',
+50, '#f67a49',
+60, '#df4e4b',
+70, '#b81e48',
+80 , '#9e0142',
+
+        ],
+},
+'filter': ['==', '$type', 'Point'],
+'filter': ['!=', ["get", "vmax"], null]
+});
+map.addLayer({
+'id': 'mean wind',
+'type': 'symbol',
+'source': 'AEMET',
+'layout': {
+                "icon-image": "wind-arrow2",// make layer invisible by default
+                'visibility': 'none',
+                'icon-allow-overlap': true,
+                "icon-rotate": ["get", "vdir"],
+                'icon-size': [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    0,
+                    0.02,
+                    0.06,
+                    0.09,
+                    0.12,
+                    0.15,
+                    0.24,
+                    0.5,
+                ],
+            },
+'paint': {
+    'icon-opacity': 1,
+    'icon-color':  [
+             "interpolate",
+            ["exponential", 1],
+            ["get", "vvmean"],
+0,  '#5e4fa2',
+2,  '#3880b9',
+4,  '#58b2ac',
+6,  '#8fd2a4',
+8,  '#c6e89f',
+10, '#eef8a4',
+12, '#fff8b4',
+14, '#fedc88',
+16, '#fdb163',
+18, '#f67a49',
+20, '#df4e4b',
+25, '#b81e48',
+30, '#9e0142',
+
+        ],
+},
+'filter': ['==', '$type', 'Point'],
+'filter': ['!=', ["get", "vvmean"], null]
+});
+
 map.addLayer({
 'id': 'prec',
 'type': 'circle',
@@ -383,7 +543,7 @@ map.addLayer({
 'filter': ['==', '$type', 'Point']
 });
 map.addLayer({
-'id': 'hrmean',
+'id': 'rel hum',
 'type': 'circle',
 'source': 'AEMET',
 'layout': {
@@ -603,7 +763,7 @@ map.addLayer({
 });
 
 // enumerate ids of the layers
-var toggleableLayerIds = ['tmax','tmin', 'prec','hrmean'];
+var toggleableLayerIds = ['tmax','tmin', 'prec','rel hum','max wind','mean wind'];
 
 // set up the corresponding toggle button for each layer
 for (var i = 0; i < toggleableLayerIds.length; i++) {
@@ -656,10 +816,24 @@ map.on("mouseleave", 'tmin', function() {
   map.getCanvas().style.cursor = '';
   });
 
-map.on('mousemove', 'hrmean', (e) => {
+map.on('mousemove', 'rel hum', (e) => {
   map.getCanvas().style.cursor = 'pointer';
   });
-map.on("mouseleave", 'hrmean', function() {
+map.on("mouseleave", 'rel hum', function() {
+  map.getCanvas().style.cursor = '';
+  });
+
+map.on('mousemove', 'max wind', (e) => {
+  map.getCanvas().style.cursor = 'pointer';
+  });
+map.on("mouseleave", 'max wind', function() {
+  map.getCanvas().style.cursor = '';
+  });
+
+map.on('mousemove', 'mean wind', (e) => {
+  map.getCanvas().style.cursor = 'pointer';
+  });
+map.on("mouseleave", 'mean wind', function() {
   map.getCanvas().style.cursor = '';
   });
 // link.onclick = function (e) {
