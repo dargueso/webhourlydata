@@ -569,7 +569,7 @@ map.addLayer({
 'filter': ['==', '$type', 'Point']
 });
 map.addLayer({
-'id': 'Stations',
+'id': 'Stations_white',
 'type': 'circle',
 'source': 'AEMET',
 'layout': {
@@ -577,8 +577,26 @@ map.addLayer({
                 'visibility': 'visible'
             },
 'paint': {
+    "circle-color":'#fff',
     "circle-opacity": 0.6,
-    "circle-radius": 1,
+    "circle-radius": 2,
+    "circle-stroke-color":'#fff',
+    "circle-stroke-width": 0.5
+},
+});
+map.addLayer({
+'id': 'Stations_black',
+'type': 'circle',
+'source': 'AEMET',
+'layout': {
+                // make layer invisible by default
+                'visibility': 'none'
+            },
+'paint': {
+    "circle-color":'#000000',
+    "circle-opacity": 0.8,
+    "circle-radius": 2,
+    "circle-stroke-color":'#000000',
     "circle-stroke-width": 0.5
 },
 });
@@ -604,11 +622,13 @@ link.onclick = function(e) {
     if (clickedLayer === toggleableLayerIds[j]) {
       layers.children[j].className = 'active';
       map.setLayoutProperty(toggleableLayerIds[j], 'visibility', 'visible');
+      map.setLayoutProperty('Stations_black', 'visibility', 'visible');
       document.getElementById(toggleableLayerIds[j] + "-legend").style.display = "flex";
     }
     else {
       layers.children[j].className = '';
       map.setLayoutProperty(toggleableLayerIds[j], 'visibility', 'none');
+      map.setLayoutProperty('Stations_white', 'visibility', 'none');
       document.getElementById(toggleableLayerIds[j] + "-legend").style.display = "";
     }
   }
