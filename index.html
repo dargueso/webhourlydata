@@ -278,7 +278,7 @@
     var map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/zumodelsur/ckll2fjxo0rs917ln82u42j3l', // replace this with your style URL
-      center: [-5, 39],
+      center: [-7, 37],
       zoom: 4.26
     });
     // code from the next step will go here
@@ -297,7 +297,8 @@
       .setLngLat(feature.geometry.coordinates)
       .setHTML('<h3>' + feature.properties.name + '</h3>' + '<br>' + 'prec: ' + feature.properties.prec + 'mm'
        + '<br>' + 'tmax: ' + feature.properties.tmax + '&#176C'
-       + '<br>' + 'tmin: ' + feature.properties.tmin + '&#176C')
+       + '<br>' + 'tmin: ' + feature.properties.tmin + '&#176C'
+       + '<br>' + "<p>"+ 'last update: ' + feature.properties.last_update +"</p>")
       .addTo(map);
       });
 
