@@ -129,33 +129,29 @@
 .mapboxgl-popup-anchor-top > .mapboxgl-popup-tip {
   border-bottom-color: #91c949;
 }
-.title {
-	color: #fff;
-	opacity: 90%;
-	border-radius: 1em;
-	top: 5em;
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-	font: .8em/.9em 'Open Sans', sans-serif;
-	padding: 1em 2em 0em;
-	position: absolute;
-  width: 350px;
-	margin: 0em 5em;
-	z-index: 100;
-}
 
 .legend {
+  color: #fff;
   font: 1em/1.5em 'Open Sans', sans-serif;
-  padding: 2px 2px 2px 2px;
-  position: relative;
-  right: 20px;
+  padding: 1em 2em 0em;
+  /* top: 5em; */
+  position: absolute;
+  top: 95%;  /* position the top  edge of the element at the middle of the parent */
+  left: 50%; /* position the left edge of the element at the middle of the parent */
+
+  transform: translate(-50%, -50%); /* This is a shorthand of
+                                       translateX(-50%) and translateY(-50%) */
+  margin: 0em 5em;
   z-index: 100;
   opacity: 100%;
   display: none;
   flex-direction: row;
+
 }
 .legend h4 {
   margin: 0px 5px 5px;
   opacity: 100%;
+
 }
 .legend div span {
   border-radius: 0%;
@@ -163,6 +159,7 @@
   flex-direction: row;
   height: 15px;
   width: 20px;
+
 }
 .legend p{
   text-align: center;
@@ -216,57 +213,70 @@
     <nav id="menu"></nav>
     <div id='map'>
 
-    <div id='title' class="title">
-        <div  id="prec-legend" class="legend">
-            <h4>Prec (mm)</h4>
-            <div><span style="background-color: #ffffd9"></span><p>0</p></div>
-            <div><span style="background-color: #f1faba"></span><p>1</p></div>
-            <div><span style="background-color: #d6efb3"></span><p>2</p></div>
-            <div><span style="background-color: #abdeb7"></span><p>4</p></div>
-            <div><span style="background-color: #73c8bd"></span><p>6</p></div>
-            <div><span style="background-color: #42b6c4"></span><p>8</p></div>
-            <div><span style="background-color: #2498c1"></span><p>10</p></div>
-            <div><span style="background-color: #2073b2"></span><p>15</p></div>
-            <div><span style="background-color: #234da0"></span><p>20</p></div>
-            <div><span style="background-color: #203089"></span><p>25</p></div>
-            <div><span style="background-color: #081d58"></span><p>30</p></div>
-            <div><span style="background-color: #090858"></span><p>40</p></div>
-            <div><span style="background-color: #261061"></span><p>50</p></div>
 
-        </div>
-                <div id="tmax-legend" class="legend">
-                    <h4>Tmax (&#8451;)</h4>
-                    <div><span style="background-color: #5e4fa2"></span><p>0</p></div>
-                    <div><span style="background-color: #3880b9"></span><p>2</p></div>
-                    <div><span style="background-color: #58b2ac"></span><p>4</p></div>
-                    <div><span style="background-color: #8fd2a4"></span><p>6</p></div>
-                    <div><span style="background-color: #c6e89f"></span><p>8</p></div>
-                    <div><span style="background-color: #eef8a4"></span><p>10</p></div>
-                    <div><span style="background-color: #fff8b4"></span><p>12</p></div>
-                    <div><span style="background-color: #fedc88"></span><p>14</p></div>
-                    <div><span style="background-color: #fdb163"></span><p>16</p></div>
-                    <div><span style="background-color: #f67a49"></span><p>18</p></div>
-                    <div><span style="background-color: #df4e4b"></span><p>20</p></div>
-                    <div><span style="background-color: #b81e48"></span><p>22</p></div>
-                    <div><span style="background-color: #9e0142"></span><p>24</p></div>
-                </div>
-                <div id="tmin-legend" class="legend">
-                    <h4>Tmin (&#8451;)</h4>
-                    <div><span style="background-color: #5e4fa2"></span><p>-10</p></div>
-                    <div><span style="background-color: #3880b9"></span><p>-8</p></div>
-                    <div><span style="background-color: #58b2ac"></span><p>-6</p></div>
-                    <div><span style="background-color: #8fd2a4"></span><p>-4</p></div>
-                    <div><span style="background-color: #c6e89f"></span><p>-2</p></div>
-                    <div><span style="background-color: #eef8a4"></span><p>0</p></div>
-                    <div><span style="background-color: #fff8b4"></span><p>2</p></div>
-                    <div><span style="background-color: #fedc88"></span><p>4</p></div>
-                    <div><span style="background-color: #fdb163"></span><p>6</p></div>
-                    <div><span style="background-color: #f67a49"></span><p>8</p></div>
-                    <div><span style="background-color: #df4e4b"></span><p>10</p></div>
-                    <div><span style="background-color: #b81e48"></span><p>12</p></div>
-                    <div><span style="background-color: #9e0142"></span><p>14</p></div>
-                </div>
-                </div>
+    <div  id="prec-legend" class="legend">
+        <h4>Prec (mm)</h4>
+        <div><span style="background-color: #ffffd9"></span><p>0</p></div>
+        <div><span style="background-color: #f1faba"></span><p>1</p></div>
+        <div><span style="background-color: #d6efb3"></span><p>2</p></div>
+        <div><span style="background-color: #abdeb7"></span><p>4</p></div>
+        <div><span style="background-color: #73c8bd"></span><p>6</p></div>
+        <div><span style="background-color: #42b6c4"></span><p>8</p></div>
+        <div><span style="background-color: #2498c1"></span><p>10</p></div>
+        <div><span style="background-color: #2073b2"></span><p>15</p></div>
+        <div><span style="background-color: #234da0"></span><p>20</p></div>
+        <div><span style="background-color: #203089"></span><p>25</p></div>
+        <div><span style="background-color: #081d58"></span><p>30</p></div>
+        <div><span style="background-color: #090858"></span><p>40</p></div>
+        <div><span style="background-color: #261061"></span><p>50</p></div>
+    </div>
+    <div  id="hrmean-legend" class="legend">
+        <h4>Relative Hum (%)</h4>
+        <div><span style="background-color: #ffffd9"></span><p>0</p></div>
+        <div><span style="background-color: #f1faba"></span><p>10</p></div>
+        <div><span style="background-color: #d6efb3"></span><p>20</p></div>
+        <div><span style="background-color: #abdeb7"></span><p>30</p></div>
+        <div><span style="background-color: #73c8bd"></span><p>40</p></div>
+        <div><span style="background-color: #42b6c4"></span><p>50</p></div>
+        <div><span style="background-color: #2498c1"></span><p>60</p></div>
+        <div><span style="background-color: #2073b2"></span><p>70</p></div>
+        <div><span style="background-color: #234da0"></span><p>80</p></div>
+        <div><span style="background-color: #203089"></span><p>90</p></div>
+        <div><span style="background-color: #081d58"></span><p>100</p></div>
+    </div>
+    <div id="tmax-legend" class="legend">
+        <h4>Tmax (&#8451;)</h4>
+        <div><span style="background-color: #5e4fa2"></span><p>0</p></div>
+        <div><span style="background-color: #3880b9"></span><p>2</p></div>
+        <div><span style="background-color: #58b2ac"></span><p>4</p></div>
+        <div><span style="background-color: #8fd2a4"></span><p>6</p></div>
+        <div><span style="background-color: #c6e89f"></span><p>8</p></div>
+        <div><span style="background-color: #eef8a4"></span><p>10</p></div>
+        <div><span style="background-color: #fff8b4"></span><p>12</p></div>
+        <div><span style="background-color: #fedc88"></span><p>14</p></div>
+        <div><span style="background-color: #fdb163"></span><p>16</p></div>
+        <div><span style="background-color: #f67a49"></span><p>18</p></div>
+        <div><span style="background-color: #df4e4b"></span><p>20</p></div>
+        <div><span style="background-color: #b81e48"></span><p>22</p></div>
+        <div><span style="background-color: #9e0142"></span><p>24</p></div>
+    </div>
+    <div id="tmin-legend" class="legend">
+        <h4>Tmin (&#8451;)</h4>
+        <div><span style="background-color: #5e4fa2"></span><p>-10</p></div>
+        <div><span style="background-color: #3880b9"></span><p>-8</p></div>
+        <div><span style="background-color: #58b2ac"></span><p>-6</p></div>
+        <div><span style="background-color: #8fd2a4"></span><p>-4</p></div>
+        <div><span style="background-color: #c6e89f"></span><p>-2</p></div>
+        <div><span style="background-color: #eef8a4"></span><p>0</p></div>
+        <div><span style="background-color: #fff8b4"></span><p>2</p></div>
+        <div><span style="background-color: #fedc88"></span><p>4</p></div>
+        <div><span style="background-color: #fdb163"></span><p>6</p></div>
+        <div><span style="background-color: #f67a49"></span><p>8</p></div>
+        <div><span style="background-color: #df4e4b"></span><p>10</p></div>
+        <div><span style="background-color: #b81e48"></span><p>12</p></div>
+        <div><span style="background-color: #9e0142"></span><p>14</p></div>
+    </div>
+
     </div>
 
 
@@ -284,7 +294,7 @@
     // code from the next step will go here
       map.on('click', function(e) {
     var features = map.queryRenderedFeatures(e.point, {
-      layers: ['prec','tmax','tmin'] // replace this with the name of the layer
+      layers: ['prec','tmax','tmin','hrmean'] // replace this with the name of the layer
     });
 
     if (!features.length) {
@@ -298,6 +308,7 @@
       .setHTML('<h3>' + feature.properties.name + '</h3>' + '<br>' + 'prec: ' + feature.properties.prec + 'mm'
        + '<br>' + 'tmax: ' + feature.properties.tmax + '&#176C'
        + '<br>' + 'tmin: ' + feature.properties.tmin + '&#176C'
+       + '<br>' + 'rel. hum.: ' + feature.properties.hrmean + '%'
        + '<br>' + "<p style='font-size: 10px;'>"+ 'last update: ' + feature.properties.last_update +"</p>")
       .addTo(map);
       });
@@ -363,7 +374,68 @@ map.addLayer({
 15,'#2073b2',
 20,'#234da0',
 25,'#203089',
-30,'#081d58'
+30,'#081d58',
+40,'#090858',
+50,'#261061',
+    ],
+    "circle-stroke-width": 1.5
+},
+'filter': ['==', '$type', 'Point']
+});
+map.addLayer({
+'id': 'hrmean',
+'type': 'circle',
+'source': 'AEMET',
+'layout': {
+                // make layer invisible by default
+                'visibility': 'none'
+            },
+'paint': {
+    "circle-color": [
+        "interpolate",
+        ["exponential", 1],
+        ["get", "hrmean"],
+0,'#ffffd9',
+10,'#f1faba',
+20,'#d6efb3',
+30,'#abdeb7',
+40,'#73c8bd',
+50,'#42b6c4',
+60,'#2498c1',
+70,'#2073b2',
+80,'#234da0',
+90,'#203089',
+100,'#081d58',
+    ],
+    "circle-opacity": 0.6,
+    "circle-radius": [
+        "interpolate",
+        ["linear"],
+        ["zoom"],
+        0,
+        2,
+        4,
+        6,
+        8,
+        10,
+        16,
+        20
+    ],
+    "circle-stroke-color": [
+        "interpolate",
+        ["exponential", 1],
+        ["get", "hrmean"],
+0,'#ffffd9',
+10,'#f1faba',
+20,'#d6efb3',
+30,'#abdeb7',
+40,'#73c8bd',
+50,'#42b6c4',
+60,'#2498c1',
+70,'#2073b2',
+80,'#234da0',
+90,'#203089',
+100,'#081d58',
     ],
     "circle-stroke-width": 1.5
 },
@@ -513,7 +585,7 @@ map.addLayer({
 });
 
 // enumerate ids of the layers
-var toggleableLayerIds = ['tmax','tmin', 'prec'];
+var toggleableLayerIds = ['tmax','tmin', 'prec','hrmean'];
 
 // set up the corresponding toggle button for each layer
 for (var i = 0; i < toggleableLayerIds.length; i++) {
@@ -561,6 +633,13 @@ map.on('mousemove', 'tmin', (e) => {
   map.getCanvas().style.cursor = 'pointer';
   });
 map.on("mouseleave", 'tmin', function() {
+  map.getCanvas().style.cursor = '';
+  });
+
+map.on('mousemove', 'hrmean', (e) => {
+  map.getCanvas().style.cursor = 'pointer';
+  });
+map.on("mouseleave", 'hrmean', function() {
   map.getCanvas().style.cursor = '';
   });
 // link.onclick = function (e) {
