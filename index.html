@@ -87,7 +87,7 @@
 }
 
 .mapboxgl-popup-content {
-  font: 400 15px/22px 'Open Sans', 'Helvetica Neue', Sans-serif;
+  font: 400 1em/1.2em 'Open Sans', 'Helvetica Neue', Sans-serif;
   padding: 10px;
   width: 180px;
 }
@@ -103,7 +103,7 @@
   display: block;
   padding: 10px;
   border-radius: 3px 3px 0 0;
-  font-weight: 700;
+  font-weight: 500;
   margin-top: 0px;
   z-index: 100;
 }
@@ -375,18 +375,20 @@
     if (!features.length) {
       return;
     }
-
+    function checknull(value) {
+        return (value == 'null') ? "--" : value
+    }
     var feature = features[0];
 
     var popup = new mapboxgl.Popup({ offset: [0, -15] })
       .setLngLat(feature.geometry.coordinates)
-      .setHTML('<h3>' + feature.properties.name + '</h3>' + '<br>' + 'prec: ' + feature.properties.prec + 'mm'
-       + '<br>' + 'tmax: ' + feature.properties.tmax + '&#176C'
-       + '<br>' + 'tmin: ' + feature.properties.tmin + '&#176C'
-       + '<br>' + 'rel. hum.: ' + feature.properties.hrmean + '%'
-        + '<br>' + 'max wind spd: ' + feature.properties.vmax + 'km/h'
-        + '<br>' + 'mean wind spd: ' + feature.properties.vvmean + 'km/h'
-       + '<br>' + "<p style='font-size: 10px;'>"+ 'last update: ' + feature.properties.last_update +"</p>")
+      .setHTML('<h3>' + feature.properties.name + '</h3>' + '<br>' + 'prec: ' + checknull(feature.properties.prec) + ' mm'
+       + '<br>' + 'tmax: ' + checknull(feature.properties.tmax) + ' &#176C'
+       + '<br>' + 'tmin: ' + checknull(feature.properties.tmin) + ' &#176C'
+       + '<br>' + 'rel. hum.: ' + checknull(feature.properties.hrmean) + ' %'
+        + '<br>' + 'max wind spd: ' + checknull(feature.properties.vmax) + ' km/h'
+        + '<br>' + 'mean wind spd: ' + checknull(feature.properties.vvmean) + ' km/h'
+       + '<br>' + "<p style='font-size: 0.8em;'>"+ 'last update: ' + feature.properties.last_update +"</p>")
       .addTo(map);
       });
 
@@ -775,7 +777,7 @@ map.addLayer({
 'paint': {
     "circle-color":'#000000',
     "circle-opacity": 0.8,
-    "circle-radius": 2,
+    "circle-radius": 1,
     "circle-stroke-color":'#000000',
     "circle-stroke-width": 0.5
 },
@@ -783,12 +785,11 @@ map.addLayer({
 });
 
 // enumerate ids of the layers
-var toggleableLayerIds = ['tmax','tmin', 'prec','rel hum','max wind','mean wind'];
+var toggleableLayerIds = [ 'prec','tmax','tmin','rel hum','max wind','mean wind'];
 
 // set up the corresponding toggle button for each layer
 for (var i = 0; i < toggleableLayerIds.length; i++) {
 var id = toggleableLayerIds[i];
-
 var link = document.createElement('a');
 link.href = '#';
 if (id == 'prec'){
