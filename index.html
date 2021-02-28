@@ -133,18 +133,18 @@
 
 	opacity: 90%;
 	border-radius: 1em;
-	top: 5em;
+	/* top: 20%; */
 	font: .8em/.9em 'Impact', sans-serif;
 	position: absolute;
-	max-width: 25%;
-	margin: 0em 5em;
+	max-width: 20%;
+	margin: 5% 10%;
 	z-index: 100;
 }
 .title h1{
   color: #fff;
   font-weight: 900;
   line-height: 1em;
-  font-size:40px;
+  font-size:3.5em;
 	opacity: 100%;
 }
 .legend {
@@ -188,21 +188,21 @@
     position: absolute;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     z-index: 1;
-    top: 10px;
-    right: 10px;
+    top: 2%;
+    right: 2%;
     border-radius: 3px;
-    width: 120px;
+    width: 5%;
+    min-width: 70px;
     border: 1px solid rgba(0, 0, 0, 0.4);
     font-family: 'Open Sans', sans-serif;
     }
 
     #menu a {
-    font-size: 13px;
+    font-size: 0.8em;
     color: #404040;
     display: block;
     margin: 0;
-    padding: 0;
-    padding: 10px;
+    padding: 3%;
     text-decoration: none;
     border-bottom: 1px solid rgba(0, 0, 0, 0.25);
     text-align: center;
@@ -402,7 +402,7 @@ map.addLayer({
                     0.12,
                     0.15,
                     0.24,
-                    0.5,
+                    0.4,
                 ],
             },
 'paint': {
@@ -450,7 +450,7 @@ map.addLayer({
                     0.12,
                     0.15,
                     0.24,
-                    0.5,
+                    0.4,
                 ],
             },
 'paint': {
@@ -485,7 +485,7 @@ map.addLayer({
 'source': 'AEMET',
 'layout': {
                 // make layer invisible by default
-                'visibility': 'none'
+                'visibility': 'visible'
             },
 'paint': {
     "circle-color": [
@@ -728,29 +728,29 @@ map.addLayer({
 },
 'filter': ['==', '$type', 'Point']
 });
-map.addLayer({
-'id': 'Stations_white',
-'type': 'circle',
-'source': 'AEMET',
-'layout': {
-                // make layer invisible by default
-                'visibility': 'visible'
-            },
-'paint': {
-    "circle-color":'#fff',
-    "circle-opacity": 0.6,
-    "circle-radius": 2,
-    "circle-stroke-color":'#fff',
-    "circle-stroke-width": 0.5
-},
-});
+// map.addLayer({
+// 'id': 'Stations_white',
+// 'type': 'circle',
+// 'source': 'AEMET',
+// 'layout': {
+//                 // make layer invisible by default
+//                 'visibility': 'visible'
+//             },
+// 'paint': {
+//     "circle-color":'#fff',
+//     "circle-opacity": 0.6,
+//     "circle-radius": 2,
+//     "circle-stroke-color":'#fff',
+//     "circle-stroke-width": 0.5
+// },
+// });
 map.addLayer({
 'id': 'Stations_black',
 'type': 'circle',
 'source': 'AEMET',
 'layout': {
                 // make layer invisible by default
-                'visibility': 'none'
+                'visibility': 'visible'
             },
 'paint': {
     "circle-color":'#000000',
@@ -771,7 +771,12 @@ var id = toggleableLayerIds[i];
 
 var link = document.createElement('a');
 link.href = '#';
-link.className = '';
+if (id == 'prec'){
+  link.className = 'active';
+}
+else{
+  link.className = '';
+}
 link.textContent = id;
 
 link.onclick = function(e) {
@@ -782,13 +787,13 @@ link.onclick = function(e) {
     if (clickedLayer === toggleableLayerIds[j]) {
       layers.children[j].className = 'active';
       map.setLayoutProperty(toggleableLayerIds[j], 'visibility', 'visible');
-      map.setLayoutProperty('Stations_black', 'visibility', 'visible');
+      // map.setLayoutProperty('Stations_black', 'visibility', 'visible');
       document.getElementById(toggleableLayerIds[j] + "-legend").style.display = "flex";
     }
     else {
       layers.children[j].className = '';
       map.setLayoutProperty(toggleableLayerIds[j], 'visibility', 'none');
-      map.setLayoutProperty('Stations_white', 'visibility', 'none');
+      // map.setLayoutProperty('Stations_white', 'visibility', 'none');
       document.getElementById(toggleableLayerIds[j] + "-legend").style.display = "";
     }
   }
