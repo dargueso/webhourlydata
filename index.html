@@ -590,6 +590,7 @@ map.addLayer({
     ],
     "circle-stroke-width": 1.5
 },
+'filter': ['!=', ["get", "prec"], null],
 'filter': ['==', '$type', 'Point']
 });
 map.addLayer({
@@ -637,6 +638,7 @@ map.addLayer({
     ],
     "circle-stroke-width": 1.5
 },
+'filter': ['!=', ["get", "hrmean"], null],
 'filter': ['==', '$type', 'Point']
 });
 
@@ -689,6 +691,7 @@ map.addLayer({
     ],
     "circle-stroke-width": 1.5
 },
+'filter': ['!=', ["get", "tmax"], null],
 'filter': ['==', '$type', 'Point']
 });
 map.addLayer({
@@ -740,6 +743,7 @@ map.addLayer({
     ],
     "circle-stroke-width": 1.5
 },
+'filter': ['!=', ["get", "tmin"], null],
 'filter': ['==', '$type', 'Point']
 });
 // map.addLayer({
