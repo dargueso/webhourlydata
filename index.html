@@ -4,6 +4,7 @@
     <meta charset='utf-8' />
     <title>Last 24-h weather in Spain</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.0/chroma.min.js" integrity="sha512-yocoLferfPbcwpCMr8v/B0AB4SWpJlouBwgE0D3ZHaiP1nuu5djZclFEIj9znuqghaZ3tdCMRrreLoM8km+jIQ==" crossorigin="anonymous"></script>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css' rel='stylesheet' />
     <style>
@@ -349,6 +350,21 @@
 
         </div>
 
+        <div id="insol-legend" class="legend">
+            <h4>Insol. (h)</h4>
+            <div><span style="background-color: #160b39"></span><p>0</p></div>
+            <div><span style="background-color: #420a68"></span><p>2</p></div>
+            <div><span style="background-color: #6a176e"></span><p>4</p></div>
+            <div><span style="background-color: #932667"></span><p>6</p></div>
+            <div><span style="background-color: #ba3655"></span><p>8</p></div>
+            <div><span style="background-color: #dd513a"></span><p>10</p></div>
+            <div><span style="background-color: #f3761b"></span><p>12</p></div>
+            <div><span style="background-color: #fca50a"></span><p>14</p></div>
+            <div><span style="background-color: #f6d543"></span><p>16</p></div>
+            <div><span style="background-color: #fcffa4"></span><p>18</p></div>
+
+        </div>
+
     </div>
 
 
@@ -369,7 +385,7 @@
     // code from the next step will go here
       map.on('click', function(e) {
     var features = map.queryRenderedFeatures(e.point, {
-      layers: ['prec','tmax','tmin','rel hum','max wind','mean wind'] // replace this with the name of the layer
+      layers: ['prec','tmax','tmin','rel hum','max wind','mean wind','insol'] // replace this with the name of the layer
     });
 
     if (!features.length) {
@@ -388,6 +404,7 @@
        + '<br>' + 'rel. hum.: ' + checknull(feature.properties.hrmean) + ' %'
         + '<br>' + 'max wind spd: ' + checknull(feature.properties.vmax) + ' km/h'
         + '<br>' + 'mean wind spd: ' + checknull(feature.properties.vvmean) + ' km/h'
+        + '<br>' + 'insol hours: ' + checknull(feature.properties.insol) + ' h'
        + '<br>' + "<p style='font-size: 0.8em;'>"+ 'last update: ' + feature.properties.last_update +"</p>")
       .addTo(map);
       });
@@ -413,19 +430,7 @@ map.addLayer({
                 'visibility': 'none',
                 'icon-allow-overlap': true,
                 "icon-rotate": ["get", "dmax"],
-                'icon-size': [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    0,
-                    0.02,
-                    0.06,
-                    0.09,
-                    0.12,
-                    0.15,
-                    0.24,
-                    0.4,
-                ],
+                'icon-size': ['interpolate', ['linear'], ['zoom'], 1, 0.02, 15, 1],
             },
 'paint': {
     'icon-opacity': 0.7,
@@ -461,19 +466,8 @@ map.addLayer({
                 'visibility': 'none',
                 'icon-allow-overlap': true,
                 "icon-rotate": ["get", "vdir"],
-                'icon-size': [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    0,
-                    0.02,
-                    0.06,
-                    0.09,
-                    0.12,
-                    0.15,
-                    0.24,
-                    0.4,
-                ],
+                'icon-size': ['interpolate', ['linear'], ['zoom'], 1, 0.02, 15, 1],
+
             },
 'paint': {
     'icon-opacity': 0.7,
@@ -499,6 +493,52 @@ map.addLayer({
 },
 'filter': ['==', '$type', 'Point'],
 'filter': ['!=', ["get", "vvmean"], null]
+});
+map.addLayer({
+'id': 'insol',
+'type': 'circle',
+'source': 'AEMET',
+'layout': {
+                // make layer invisible by default
+                'visibility': 'none'
+            },
+'paint': {
+    "circle-color": [
+        "interpolate",
+        ["exponential", 1],
+        ["get", "insol"],
+        0, '#160b39',
+        2,'#420a68',
+        4, '#6a176e',
+        6, '#932667',
+        8, '#ba3655',
+        10, '#dd513a',
+        12, '#f3761b',
+        14 ,'#fca50a',
+        16, '#f6d543',
+        18, '#fcffa4',
+    ],
+    "circle-opacity": 0.6,
+    "circle-radius": ['interpolate', ['linear'], ['zoom'], 0, 2, 16,20],
+    "circle-stroke-color": [
+        "interpolate",
+        ["exponential", 1],
+        ["get", "insol"],
+        0, '#160b39',
+        2,'#420a68',
+        4, '#6a176e',
+        6, '#932667',
+        8, '#ba3655',
+        10, '#dd513a',
+        12, '#f3761b',
+        14 ,'#fca50a',
+        16, '#f6d543',
+        18, '#fcffa4',
+            ],
+    "circle-stroke-width": 1.5
+},
+'filter': ['==', '$type', 'Point'],
+'filter': ['!=', ["get", "insol"], null],
 });
 
 map.addLayer({
@@ -529,19 +569,7 @@ map.addLayer({
 50,'#261061',
     ],
     "circle-opacity": 0.6,
-    "circle-radius": [
-        "interpolate",
-        ["linear"],
-        ["zoom"],
-        0,
-        2,
-        4,
-        6,
-        8,
-        10,
-        16,
-        20
-    ],
+    "circle-radius": ['interpolate', ['linear'], ['zoom'], 0, 2, 16,20],
     "circle-stroke-color": [
         "interpolate",
         ["exponential", 1],
@@ -590,19 +618,7 @@ map.addLayer({
 100,'#081d58',
     ],
     "circle-opacity": 0.6,
-    "circle-radius": [
-        "interpolate",
-        ["linear"],
-        ["zoom"],
-        0,
-        2,
-        4,
-        6,
-        8,
-        10,
-        16,
-        20
-    ],
+    "circle-radius": ['interpolate', ['linear'], ['zoom'], 0, 2, 16,20],
     "circle-stroke-color": [
         "interpolate",
         ["exponential", 1],
@@ -652,19 +668,7 @@ map.addLayer({
 24,'#9e0142'
     ],
     "circle-opacity": 0.6,
-    "circle-radius": [
-        "interpolate",
-        ["linear"],
-        ["zoom"],
-        0,
-        2,
-        4,
-        6,
-        8,
-        10,
-        16,
-        20
-    ],
+    "circle-radius": ['interpolate', ['linear'], ['zoom'], 0, 2, 16,20],
     "circle-stroke-color": [
         "interpolate",
         ["exponential", 1],
@@ -715,19 +719,7 @@ map.addLayer({
 14,'#9e0142'
     ],
     "circle-opacity": 0.6,
-    "circle-radius": [
-        "interpolate",
-        ["linear"],
-        ["zoom"],
-        0,
-        2,
-        4,
-        6,
-        8,
-        10,
-        16,
-        20
-    ],
+    "circle-radius": ['interpolate', ['linear'], ['zoom'], 0, 2, 16,20],
     "circle-stroke-color": [
         "interpolate",
         ["exponential", 1],
@@ -785,7 +777,7 @@ map.addLayer({
 });
 
 // enumerate ids of the layers
-var toggleableLayerIds = [ 'prec','tmax','tmin','rel hum','max wind','mean wind'];
+var toggleableLayerIds = [ 'prec','tmax','tmin','rel hum','max wind','mean wind','insol'];
 
 // set up the corresponding toggle button for each layer
 for (var i = 0; i < toggleableLayerIds.length; i++) {
@@ -860,6 +852,13 @@ map.on('mousemove', 'mean wind', (e) => {
   map.getCanvas().style.cursor = 'pointer';
   });
 map.on("mouseleave", 'mean wind', function() {
+  map.getCanvas().style.cursor = '';
+  });
+
+map.on('mousemove', 'insol', (e) => {
+  map.getCanvas().style.cursor = 'pointer';
+  });
+map.on("mouseleave", 'insol', function() {
   map.getCanvas().style.cursor = '';
   });
 // link.onclick = function (e) {
