@@ -1,7 +1,1 @@
 /vg5/dargueso/Scripts/webhourlydata/git_commit.sh: line 1: this_dir: command not found
-[main 38899d1] Automatic AEMET data update
- 1 file changed, 1 insertion(+), 1 deletion(-)
- rewrite AEMET.geojson (91%)
-Warning: Permanently added the RSA host key for IP address '140.82.114.4' to the list of known hosts.
-To github.com:dargueso/webhourlydata.git
-   41ff0b7..38899d1  main -> main
