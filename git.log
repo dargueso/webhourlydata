@@ -1,1 +1,6 @@
 /vg5/dargueso/Scripts/webhourlydata/git_commit.sh: line 1: this_dir: command not found
+[main ed636aa] Automatic AEMET data update
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ rewrite AEMET.geojson (88%)
+To github.com:dargueso/webhourlydata.git
+   a39d3a5..ed636aa  main -> main
