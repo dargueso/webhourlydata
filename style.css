@@ -1,0 +1,134 @@
+body
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+
+  padding: 0;
+  margin: 0;
+  min-width: 320px;
+  -webkit-font-smoothing: antialiased
+}
+
+h1, h2, h3, h4, h5, select
+{
+  font-family: "Roboto Condensed", "Helvetica Neue Condensed", "Arial", sans-serif;
+  /* font-weight: 700; */
+  /* text-transform: uppercase; */
+}
+
+h6 {
+  font-family: "Roboto";
+  font-weight:normal;
+  font-size:0.6em;
+  text-align: center;
+}
+p
+{
+  font-family: "Roboto";
+  line-height: 175%;
+}
+
+a
+{
+  color: #b22222;
+  font-weight:bold;
+  text-decoration:none;
+}
+
+a:hover {
+  color: #570000;
+}
+
+h1
+{
+  font-size: 6em;
+}
+
+h2
+{
+  font-size: 3em;
+}
+
+h3
+{
+  font-size: 2em;
+}
+
+h4
+{
+  font-size: 1em;
+}
+
+p
+{
+  font-size: 1em;
+  line-height: 150%;
+}
+
+
+
+
+
+/* ######################################################################
+###################################################################### */
+/* ALL THIS ARE CONTENT (PLOTS) */
+
+/* content sectiona */
+
+.content_section
+{
+  padding: 0 40px;
+
+  /* display: flex enabled by js event! */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* plot-and-caption group: horizontal for desktop, vertical for mobile.
+  for the heatmap section, make it vertical for both! */
+.content_section .detail_element_content
+{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.content_section .plot
+{
+  flex: 1 67%;
+  width: 67%;
+  margin: 0 0 0 10px;
+}
+
+.content_section .map {
+  flex: 1;
+  width: 100%;
+  margin: 0 0 0 10px;
+}
+
+.map-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.content_section .plot img
+{
+  width: 100%;
+}
+
+#map {
+  height = 400;
+  width:100;
+}
+
+
+
+
