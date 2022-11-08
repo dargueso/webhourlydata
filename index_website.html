@@ -295,19 +295,19 @@
     </div>
     <div id="tmax-legend" class="legend">
         <h4>Tmax (&#8451;)</h4>
-        <div><span style="background-color: #5e4fa2"></span><p>6</p></div>
-        <div><span style="background-color: #3880b9"></span><p>8</p></div>
-        <div><span style="background-color: #58b2ac"></span><p>10</p></div>
-        <div><span style="background-color: #8fd2a4"></span><p>12</p></div>
-        <div><span style="background-color: #c6e89f"></span><p>14</p></div>
-        <div><span style="background-color: #eef8a4"></span><p>16</p></div>
-        <div><span style="background-color: #fff8b4"></span><p>18</p></div>
-        <div><span style="background-color: #fedc88"></span><p>20</p></div>
-        <div><span style="background-color: #fdb163"></span><p>22</p></div>
-        <div><span style="background-color: #f67a49"></span><p>24</p></div>
-        <div><span style="background-color: #df4e4b"></span><p>26</p></div>
-        <div><span style="background-color: #b81e48"></span><p>28</p></div>
-        <div><span style="background-color: #9e0142"></span><p>30</p></div>
+        <div><span style="background-color: #5e4fa2"></span><p>16</p></div>
+        <div><span style="background-color: #3880b9"></span><p>18</p></div>
+        <div><span style="background-color: #58b2ac"></span><p>20</p></div>
+        <div><span style="background-color: #8fd2a4"></span><p>22</p></div>
+        <div><span style="background-color: #c6e89f"></span><p>24</p></div>
+        <div><span style="background-color: #eef8a4"></span><p>26</p></div>
+        <div><span style="background-color: #fff8b4"></span><p>28</p></div>
+        <div><span style="background-color: #fedc88"></span><p>30</p></div>
+        <div><span style="background-color: #fdb163"></span><p>32</p></div>
+        <div><span style="background-color: #f67a49"></span><p>34</p></div>
+        <div><span style="background-color: #df4e4b"></span><p>36</p></div>
+        <div><span style="background-color: #b81e48"></span><p>38</p></div>
+        <div><span style="background-color: #9e0142"></span><p>40</p></div>
     </div>
     <div id="tmin-legend" class="legend">
         <h4>Tmin (&#8451;)</h4>
@@ -325,6 +325,22 @@
         <div><span style="background-color: #b81e48"></span><p>22</p></div>
         <div><span style="background-color: #9e0142"></span><p>24</p></div>
     </div>
+    <div id="temp-legend" class="legend">
+      <h4>Last temp (&#8451;)</h4>
+      <div><span style="background-color: #5e4fa2"></span><p>16</p></div>
+      <div><span style="background-color: #3880b9"></span><p>18</p></div>
+      <div><span style="background-color: #58b2ac"></span><p>20</p></div>
+      <div><span style="background-color: #8fd2a4"></span><p>22</p></div>
+      <div><span style="background-color: #c6e89f"></span><p>24</p></div>
+      <div><span style="background-color: #eef8a4"></span><p>26</p></div>
+      <div><span style="background-color: #fff8b4"></span><p>28</p></div>
+      <div><span style="background-color: #fedc88"></span><p>30</p></div>
+      <div><span style="background-color: #fdb163"></span><p>32</p></div>
+      <div><span style="background-color: #f67a49"></span><p>34</p></div>
+      <div><span style="background-color: #df4e4b"></span><p>36</p></div>
+      <div><span style="background-color: #b81e48"></span><p>38</p></div>
+      <div><span style="background-color: #9e0142"></span><p>40</p></div>
+  </div>
 
         <div id="max wind-legend" class="legend">
             <h4>Max wind (km/h)</h4>
@@ -390,14 +406,14 @@
     mapboxgl.accessToken = 'pk.eyJ1IjoienVtb2RlbHN1ciIsImEiOiJja2k0Z2Z2c2owOGlrMnFwYnR6aWgwYTRxIn0.fl4HqrLZncNLTtGhsK4P2w'; // replace this with your access token
     var map = new mapboxgl.Map({
       container: 'map',
-      style: 'mapbox://styles/zumodelsur/ckll2fjxo0rs917ln82u42j3l', // replace this with your style URL
+      style: 'mapbox://styles/zumodelsur/cl5uxn7p1000r14pbe1gus33c', // replace this with your style URL
       center: [-7, 37],
       zoom: 3.5,
     });
     // code from the next step will go here
       map.on('click', function(e) {
     var features = map.queryRenderedFeatures(e.point, {
-      layers: ['prec','tmax','tmin','rel hum','max wind','mean wind','insol'] // replace this with the name of the layer
+      layers: ['prec','tmax','tmin','temp','rel hum','max wind','mean wind','insol'] // replace this with the name of the layer
     });
 
     if (!features.length) {
@@ -413,6 +429,7 @@
       .setHTML('<h3>' + feature.properties.name + '</h3>' + '<br>' + 'prec: ' + checknull(feature.properties.prec) + ' mm'
        + '<br>' + 'tmax: ' + checknull(feature.properties.tmax) + ' &#176C'
        + '<br>' + 'tmin: ' + checknull(feature.properties.tmin) + ' &#176C'
+       + '<br>' + 'temp: ' + checknull(feature.properties.temp) + ' &#176C'
        + '<br>' + 'rel. hum.: ' + checknull(feature.properties.hrmean) + ' %'
         + '<br>' + 'max wind spd: ' + checknull(feature.properties.vmax) + ' km/h'
         + '<br>' + 'mean wind spd: ' + checknull(feature.properties.vvmean) + ' km/h'
@@ -605,6 +622,26 @@ map.addLayer({
 'filter': ['!=', ["get", "prec"], null],
 'filter': ['==', '$type', 'Point']
 });
+
+map.addLayer({
+'id': 'prec_num',
+'type': 'symbol',
+'source': 'AEMET',
+'minzoom': 6,
+'layout': {
+'visibility': 'visible',
+'text-field': ['get', 'prec'],
+'text-size': [
+    'interpolate',
+    ['exponential', 2],
+    ['zoom'],
+    6, 10, // let's assume this == 18
+    25, 20 // let's assume this == 300 (exceeds the 255 limit)
+  ]
+},
+'filter': ['!=', ["get", "prec"], null],
+'filter': ['==', '$type', 'Point']
+});
 map.addLayer({
 'id': 'rel hum',
 'type': 'circle',
@@ -667,19 +704,19 @@ map.addLayer({
         "interpolate",
         ["exponential", 1],
         ["get", "tmax"],
-6,'#5e4fa2',
-8, '#3880b9',
-10, '#58b2ac',
-12, '#8fd2a4',
-14, '#c6e89f',
-16, '#eef8a4',
-18, '#fff8b4',
-20, '#fedc88',
-22, '#fdb163',
-24, '#f67a49',
-26, '#df4e4b',
-28, '#b81e48',
-30,'#9e0142'
+16,'#5e4fa2',
+18, '#3880b9',
+20, '#58b2ac',
+22, '#8fd2a4',
+24, '#c6e89f',
+26, '#eef8a4',
+28, '#fff8b4',
+30, '#fedc88',
+32, '#fdb163',
+34, '#f67a49',
+36, '#df4e4b',
+38, '#b81e48',
+40,'#9e0142'
     ],
     "circle-opacity": 0.6,
     "circle-radius": ['interpolate', ['linear'], ['zoom'], 0, 2, 16,20],
@@ -687,21 +724,41 @@ map.addLayer({
         "interpolate",
         ["exponential", 1],
         ["get", "tmax"],
-6,'#5e4fa2',
-8, '#3880b9',
-10, '#58b2ac',
-12, '#8fd2a4',
-14, '#c6e89f',
-16, '#eef8a4',
-18, '#fff8b4',
-20, '#fedc88',
-22, '#fdb163',
-24, '#f67a49',
-26, '#df4e4b',
-28, '#b81e48',
-30,'#9e0142'
+        16,'#5e4fa2',
+18, '#3880b9',
+20, '#58b2ac',
+22, '#8fd2a4',
+24, '#c6e89f',
+26, '#eef8a4',
+28, '#fff8b4',
+30, '#fedc88',
+32, '#fdb163',
+34, '#f67a49',
+36, '#df4e4b',
+38, '#b81e48',
+40,'#9e0142'
     ],
     "circle-stroke-width": 1.5
+},
+'filter': ['!=', ["get", "tmax"], null],
+'filter': ['==', '$type', 'Point']
+});
+
+map.addLayer({
+'id': 'tmax_num',
+'type': 'symbol',
+'source': 'AEMET',
+'minzoom': 6,
+'layout': {
+'visibility': 'none',
+'text-field': ['get', 'tmax'],
+'text-size': [
+    'interpolate',
+    ['exponential', 2],
+    ['zoom'],
+    6, 10, // let's assume this == 18
+    25, 20 // let's assume this == 300 (exceeds the 255 limit)
+  ]
 },
 'filter': ['!=', ["get", "tmax"], null],
 'filter': ['==', '$type', 'Point']
@@ -758,6 +815,97 @@ map.addLayer({
 'filter': ['!=', ["get", "tmin"], null],
 'filter': ['==', '$type', 'Point']
 });
+map.addLayer({
+'id': 'tmin_num',
+'type': 'symbol',
+'source': 'AEMET',
+'minzoom': 6,
+'layout': {
+'visibility': 'none',
+'text-field': ['get', 'tmin'],
+'text-size': [
+    'interpolate',
+    ['exponential', 2],
+    ['zoom'],
+    6, 10, // let's assume this == 18
+    25, 20 // let's assume this == 300 (exceeds the 255 limit)
+  ]
+},
+'filter': ['!=', ["get", "tmin"], null],
+'filter': ['==', '$type', 'Point']
+});
+map.addLayer({
+'id': 'temp',
+'type': 'circle',
+'source': 'AEMET',
+'layout': {
+                // make layer invisible by default
+                'visibility': 'none'
+            },
+'paint': {
+    "circle-color": [
+        "interpolate",
+        ["exponential", 1],
+        ["get", "temp"],
+16,'#5e4fa2',
+18, '#3880b9',
+20, '#58b2ac',
+22, '#8fd2a4',
+24, '#c6e89f',
+26, '#eef8a4',
+28, '#fff8b4',
+30, '#fedc88',
+32, '#fdb163',
+34, '#f67a49',
+36, '#df4e4b',
+38, '#b81e48',
+40,'#9e0142'
+    ],
+    "circle-opacity": 0.6,
+    "circle-radius": ['interpolate', ['linear'], ['zoom'], 0, 2, 16,20],
+    "circle-stroke-color": [
+        "interpolate",
+        ["exponential", 1],
+        ["get", "temp"],
+16,'#5e4fa2',
+18, '#3880b9',
+20, '#58b2ac',
+22, '#8fd2a4',
+24, '#c6e89f',
+26, '#eef8a4',
+28, '#fff8b4',
+30, '#fedc88',
+32, '#fdb163',
+34, '#f67a49',
+36, '#df4e4b',
+38, '#b81e48',
+40,'#9e0142'
+    ],
+    "circle-stroke-width": 1.5
+},
+'filter': ['!=', ["get", "temp"], null],
+'filter': ['==', '$type', 'Point']
+});
+map.addLayer({
+'id': 'temp_num',
+'type': 'symbol',
+'source': 'AEMET',
+'minzoom': 6,
+'layout': {
+'visibility': 'none',
+'text-field': ['get', 'temp'],
+'text-size': [
+    'interpolate',
+    ['exponential', 2],
+    ['zoom'],
+    6, 10, // let's assume this == 18
+    25, 20 // let's assume this == 300 (exceeds the 255 limit)
+  ]
+},
+'filter': ['!=', ["get", "temp"], null],
+'filter': ['==', '$type', 'Point']
+});
+
 // map.addLayer({
 // 'id': 'Stations_white',
 // 'type': 'circle',
@@ -778,6 +926,7 @@ map.addLayer({
 'id': 'Stations_black',
 'type': 'circle',
 'source': 'AEMET',
+'maxzoom': 6,
 'layout': {
                 // make layer invisible by default
                 'visibility': 'visible'
@@ -793,7 +942,7 @@ map.addLayer({
 });
 
 // enumerate ids of the layers
-var toggleableLayerIds = [ 'prec','tmax','tmin','rel hum','max wind','mean wind','insol'];
+var toggleableLayerIds = [ 'prec','tmax','tmin','temp','rel hum','max wind','mean wind','insol'];
 
 // set up the corresponding toggle button for each layer
 for (var i = 0; i < toggleableLayerIds.length; i++) {
@@ -816,12 +965,14 @@ link.onclick = function(e) {
     if (clickedLayer === toggleableLayerIds[j]) {
       layers.children[j].className = 'active';
       map.setLayoutProperty(toggleableLayerIds[j], 'visibility', 'visible');
+      map.setLayoutProperty(toggleableLayerIds[j]+"_num", 'visibility', 'visible');
       // map.setLayoutProperty('Stations_black', 'visibility', 'visible');
       document.getElementById(toggleableLayerIds[j] + "-legend").style.display = "flex";
     }
     else {
       layers.children[j].className = '';
       map.setLayoutProperty(toggleableLayerIds[j], 'visibility', 'none');
+      map.setLayoutProperty(toggleableLayerIds[j]+"_num", 'visibility', 'none');
       // map.setLayoutProperty('Stations_white', 'visibility', 'none');
       document.getElementById(toggleableLayerIds[j] + "-legend").style.display = "";
     }
@@ -847,6 +998,13 @@ map.on('mousemove', 'tmin', (e) => {
   map.getCanvas().style.cursor = 'pointer';
   });
 map.on("mouseleave", 'tmin', function() {
+  map.getCanvas().style.cursor = '';
+  });
+
+  map.on('mousemove', 'temp', (e) => {
+  map.getCanvas().style.cursor = 'pointer';
+  });
+map.on("mouseleave", 'temp', function() {
   map.getCanvas().style.cursor = '';
   });
 
