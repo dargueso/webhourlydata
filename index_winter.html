@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset='utf-8' />
+    <title>Last 24-h weather in Spain</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.0/chroma.min.js"
+        integrity="sha512-yocoLferfPbcwpCMr8v/B0AB4SWpJlouBwgE0D3ZHaiP1nuu5djZclFEIj9znuqghaZ3tdCMRrreLoM8km+jIQ=="
+        crossorigin="anonymous"></script>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PP2FWLFNFE"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-PP2FWLFNFE');
+    </script>
+</head>
+
+<body>
+    <style>
+        * {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        body {
+            color: #404040;
+            font: 400 15px/22px 'Open Sans', 'Helvetica Neue', Sans-serif;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin: 0;
+            font-weight: 400;
+            line-height: 20px;
+            padding: 20px 2px;
+        }
+
+        a {
+            color: #404040;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #101010;
+        }
+
+        /* The page is split between map and sidebar - the sidebar gets 1/3, map
+  gets 2/3 of the page. You can adjust this to your personal liking. */
+        .sidebar {
+            position: absolute;
+            width: 33.3333%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            border-right: 1px solid rgba(0, 0, 0, 0.25);
+        }
+
+        .map {
+            position: absolute;
+            left: 33.3333%;
+            width: 66.6666%;
+            top: 0;
+            bottom: 0;
+        }
+
+        .heading {
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            height: 60px;
+            line-height: 60px;
+            padding: 0 10px;
+        }
+
+        /* Marker tweaks */
+        .mapboxgl-popup-close-button {
+            display: none;
+        }
+
+        .mapboxgl-popup-content {
+            font: 400 1em/1.2em 'Open Sans', 'Helvetica Neue', Sans-serif;
+            padding: 10px;
+            width: 180px;
+        }
+
+        .mapboxgl-popup-content-wrapper {
+            padding: 2%;
+        }
+
+        .mapboxgl-popup-content h3 {
+            background: #808080;
+            color: #fff;
+            margin: 0;
+            display: block;
+            padding: 10px;
+            border-radius: 3px 3px 0 0;
+            font-weight: 500;
+            margin-top: 0px;
+            z-index: 100;
+        }
+
+        .mapboxgl-popup-content h4 {
+            margin: 0;
+            display: block;
+            padding: 10px;
+            font-weight: 400;
+        }
+
+        .mapboxgl-popup-content div {
+            padding: 10px;
+        }
+
+        .mapboxgl-container .leaflet-marker-icon {
+            cursor: pointer;
+        }
+
+        .mapboxgl-popup-anchor-top>.mapboxgl-popup-content {
+            margin-top: 15px;
+        }
+
+        .mapboxgl-popup-anchor-top>.mapboxgl-popup-tip {
+            border-bottom-color: #91c949;
+        }
+
+        .title {
+
+            opacity: 90%;
+            border-radius: 1em;
+            /* top: 20%; */
+            font: .8em/.9em 'Impact', sans-serif;
+            position: absolute;
+            max-width: 20%;
+            margin: 5% 10%;
+            z-index: 100;
+        }
+
+        .title h1 {
+            color: #fff;
+            font-weight: 900;
+            line-height: 1em;
+            font-size: 4vw;
+            opacity: 100%;
+        }
+
+        .title h3 {
+            color: #fff;
+            font-weight: 200;
+            line-height: 1em;
+            font-size: 12px;
+            opacity: 100%;
+        }
+
+        .title a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .title a:hover {
+            color: #aaa;
+        }
+
+        .legend {
+            color: #fff;
+            font: 1em/1.5em 'Open Sans', sans-serif;
+            padding: 1em 2em 0em;
+            /* top: 5em; */
+            position: absolute;
+            bottom: 5%;
+            /* position the top  edge of the element at the middle of the parent */
+            right: 2%;
+            /* position the left edge of the element at the middle of the parent */
+
+            /* transform: translate(-50%, -50%); /* This is a shorthand of
+                                       translateX(-50%) and translateY(-50%) */
+            */ margin: 0em 5em;
+            z-index: 1;
+            opacity: 100%;
+            display: none;
+            flex-direction: row;
+
+        }
+
+        .legend h4 {
+            margin: 0px 5px 5px;
+            opacity: 100%;
+
+        }
+
+        .legend div span {
+            border-radius: 0%;
+            display: flex;
+            flex-direction: row;
+            height: 15px;
+            width: 20px;
+
+        }
+
+        .legend p {
+            text-align: center;
+            margin-top: 0px;
+        }
+
+        #menu {
+            background-color: #fff;
+            opacity: 90%;
+            position: absolute;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+            top: 2%;
+            right: 2%;
+            border-radius: 3px;
+            width: 5%;
+            min-width: 70px;
+            border: 1px solid rgba(0, 0, 0, 0.4);
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        #menu a {
+            font-size: 0.8em;
+            color: #404040;
+            display: block;
+            margin: 0;
+            padding: 3%;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+            text-align: center;
+        }
+
+        #menu a:last-child {
+            border: none;
+        }
+
+        #menu a:hover {
+            background-color: #f8f8f8;
+            color: #404040;
+        }
+
+        #menu a.active {
+            background-color: #3887be;
+            color: #ffffff;
+        }
+
+        #menu a.active:hover {
+            background: #3074a4;
+        }
+    </style>
+
+    <nav id="menu"></nav>
+    <div id='map'>
+
+
+        <div id="prec-legend" style="display: flex" class="legend">
+            <h4>Prec (mm)</h4>
+            <div><span style="background-color: #ffffd9"></span>
+                <p>0</p>
+            </div>
+            <div><span style="background-color: #f1faba"></span>
+                <p>1</p>
+            </div>
+            <div><span style="background-color: #d6efb3"></span>
+                <p>2</p>
+            </div>
+            <div><span style="background-color: #abdeb7"></span>
+                <p>4</p>
+            </div>
+            <div><span style="background-color: #73c8bd"></span>
+                <p>6</p>
+            </div>
+            <div><span style="background-color: #42b6c4"></span>
+                <p>8</p>
+            </div>
+            <div><span style="background-color: #2498c1"></span>
+                <p>10</p>
+            </div>
+            <div><span style="background-color: #2073b2"></span>
+                <p>15</p>
+            </div>
+            <div><span style="background-color: #234da0"></span>
+                <p>20</p>
+            </div>
+            <div><span style="background-color: #203089"></span>
+                <p>25</p>
+            </div>
+            <div><span style="background-color: #081d58"></span>
+                <p>30</p>
+            </div>
+            <div><span style="background-color: #090858"></span>
+                <p>40</p>
+            </div>
+            <div><span style="background-color: #261061"></span>
+                <p>50</p>
+            </div>
+        </div>
+        <div id="rel hum-legend" class="legend">
+            <h4>Relative Hum (%)</h4>
+            <div><span style="background-color: #ffffd9"></span>
+                <p>0</p>
+            </div>
+            <div><span style="background-color: #f1faba"></span>
+                <p>10</p>
+            </div>
+            <div><span style="background-color: #d6efb3"></span>
+                <p>20</p>
+            </div>
+            <div><span style="background-color: #abdeb7"></span>
+                <p>30</p>
+            </div>
+            <div><span style="background-color: #73c8bd"></span>
+                <p>40</p>
+            </div>
+            <div><span style="background-color: #42b6c4"></span>
+                <p>50</p>
+            </div>
+            <div><span style="background-color: #2498c1"></span>
+                <p>60</p>
+            </div>
+            <div><span style="background-color: #2073b2"></span>
+                <p>70</p>
+            </div>
+            <div><span style="background-color: #234da0"></span>
+                <p>80</p>
+            </div>
+            <div><span style="background-color: #203089"></span>
+                <p>90</p>
+            </div>
+            <div><span style="background-color: #081d58"></span>
+                <p>100</p>
+            </div>
+        </div>
+        <div id="tmax-legend" class="legend">
+            <h4>Tmax (&#8451;)</h4>
+            <div><span style="background-color: #5e4fa2"></span>
+                <p>6</p>
+            </div>
+            <div><span style="background-color: #3880b9"></span>
+                <p>8</p>
+            </div>
+            <div><span style="background-color: #58b2ac"></span>
+                <p>10</p>
+            </div>
+            <div><span style="background-color: #8fd2a4"></span>
+                <p>12</p>
+            </div>
+            <div><span style="background-color: #c6e89f"></span>
+                <p>14</p>
+            </div>
+            <div><span style="background-color: #eef8a4"></span>
+                <p>16</p>
+            </div>
+            <div><span style="background-color: #fff8b4"></span>
+                <p>18</p>
+            </div>
+            <div><span style="background-color: #fedc88"></span>
+                <p>20</p>
+            </div>
+            <div><span style="background-color: #fdb163"></span>
+                <p>22</p>
+            </div>
+            <div><span style="background-color: #f67a49"></span>
+                <p>24</p>
+            </div>
+            <div><span style="background-color: #df4e4b"></span>
+                <p>26</p>
+            </div>
+            <div><span style="background-color: #b81e48"></span>
+                <p>28</p>
+            </div>
+            <div><span style="background-color: #9e0142"></span>
+                <p>30</p>
+            </div>
+        </div>
+        <div id="tmin-legend" class="legend">
+            <h4>Tmin (&#8451;)</h4>
+            <div><span style="background-color: #5e4fa2"></span>
+                <p>0</p>
+            </div>
+            <div><span style="background-color: #3880b9"></span>
+                <p>2</p>
+            </div>
+            <div><span style="background-color: #58b2ac"></span>
+                <p>4</p>
+            </div>
+            <div><span style="background-color: #8fd2a4"></span>
+                <p>6</p>
+            </div>
+            <div><span style="background-color: #c6e89f"></span>
+                <p>8</p>
+            </div>
+            <div><span style="background-color: #eef8a4"></span>
+                <p>10</p>
+            </div>
+            <div><span style="background-color: #fff8b4"></span>
+                <p>12</p>
+            </div>
+            <div><span style="background-color: #fedc88"></span>
+                <p>14</p>
+            </div>
+            <div><span style="background-color: #fdb163"></span>
+                <p>16</p>
+            </div>
+            <div><span style="background-color: #f67a49"></span>
+                <p>18</p>
+            </div>
+            <div><span style="background-color: #df4e4b"></span>
+                <p>20</p>
+            </div>
+            <div><span style="background-color: #b81e48"></span>
+                <p>22</p>
+            </div>
+            <div><span style="background-color: #9e0142"></span>
+                <p>24</p>
+            </div>
+        </div>
+        <div id="temp-legend" class="legend">
+            <h4>Last temp (&#8451;)</h4>
+            <div><span style="background-color: #5e4fa2"></span>
+                <p>6</p>
+            </div>
+            <div><span style="background-color: #3880b9"></span>
+                <p>8</p>
+            </div>
+            <div><span style="background-color: #58b2ac"></span>
+                <p>10</p>
+            </div>
+            <div><span style="background-color: #8fd2a4"></span>
+                <p>12</p>
+            </div>
+            <div><span style="background-color: #c6e89f"></span>
+                <p>14</p>
+            </div>
+            <div><span style="background-color: #eef8a4"></span>
+                <p>16</p>
+            </div>
+            <div><span style="background-color: #fff8b4"></span>
+                <p>18</p>
+            </div>
+            <div><span style="background-color: #fedc88"></span>
+                <p>20</p>
+            </div>
+            <div><span style="background-color: #fdb163"></span>
+                <p>22</p>
+            </div>
+            <div><span style="background-color: #f67a49"></span>
+                <p>24</p>
+            </div>
+            <div><span style="background-color: #df4e4b"></span>
+                <p>26</p>
+            </div>
+            <div><span style="background-color: #b81e48"></span>
+                <p>28</p>
+            </div>
+            <div><span style="background-color: #9e0142"></span>
+                <p>30</p>
+            </div>
+        </div>
+
+        <div id="max wind-legend" class="legend">
+            <h4>Max wind (km/h)</h4>
+            <div><span style="background-color: #5e4fa2"></span>
+                <p>0</p>
+            </div>
+            <div><span style="background-color: #3880b9"></span>
+                <p>5</p>
+            </div>
+            <div><span style="background-color: #58b2ac"></span>
+                <p>10</p>
+            </div>
+            <div><span style="background-color: #8fd2a4"></span>
+                <p>15</p>
+            </div>
+            <div><span style="background-color: #c6e89f"></span>
+                <p>20</p>
+            </div>
+            <div><span style="background-color: #eef8a4"></span>
+                <p>25</p>
+            </div>
+            <div><span style="background-color: #fff8b4"></span>
+                <p>30</p>
+            </div>
+            <div><span style="background-color: #fedc88"></span>
+                <p>35</p>
+            </div>
+            <div><span style="background-color: #fdb163"></span>
+                <p>40</p>
+            </div>
+            <div><span style="background-color: #f67a49"></span>
+                <p>50</p>
+            </div>
+            <div><span style="background-color: #df4e4b"></span>
+                <p>60</p>
+            </div>
+            <div><span style="background-color: #b81e48"></span>
+                <p>70</p>
+            </div>
+            <div><span style="background-color: #9e0142"></span>
+                <p>80</p>
+            </div>
+
+        </div>
+
+        <div id="mean wind-legend" class="legend">
+            <h4>Mean wind (km/h)</h4>
+            <div><span style="background-color: #5e4fa2"></span>
+                <p>0</p>
+            </div>
+            <div><span style="background-color: #3880b9"></span>
+                <p>2</p>
+            </div>
+            <div><span style="background-color: #58b2ac"></span>
+                <p>4</p>
+            </div>
+            <div><span style="background-color: #8fd2a4"></span>
+                <p>6</p>
+            </div>
+            <div><span style="background-color: #c6e89f"></span>
+                <p>8</p>
+            </div>
+            <div><span style="background-color: #eef8a4"></span>
+                <p>10</p>
+            </div>
+            <div><span style="background-color: #fff8b4"></span>
+                <p>12</p>
+            </div>
+            <div><span style="background-color: #fedc88"></span>
+                <p>14</p>
+            </div>
+            <div><span style="background-color: #fdb163"></span>
+                <p>16</p>
+            </div>
+            <div><span style="background-color: #f67a49"></span>
+                <p>18</p>
+            </div>
+            <div><span style="background-color: #df4e4b"></span>
+                <p>20</p>
+            </div>
+            <div><span style="background-color: #b81e48"></span>
+                <p>25</p>
+            </div>
+            <div><span style="background-color: #9e0142"></span>
+                <p>30</p>
+            </div>
+
+        </div>
+
+        <div id="insol-legend" class="legend">
+            <h4>Insol. (h)</h4>
+            <div><span style="background-color: #160b39"></span>
+                <p>0</p>
+            </div>
+            <div><span style="background-color: #420a68"></span>
+                <p>1</p>
+            </div>
+            <div><span style="background-color: #6a176e"></span>
+                <p>2</p>
+            </div>
+            <div><span style="background-color: #932667"></span>
+                <p>4</p>
+            </div>
+            <div><span style="background-color: #ba3655"></span>
+                <p>6</p>
+            </div>
+            <div><span style="background-color: #dd513a"></span>
+                <p>8</p>
+            </div>
+            <div><span style="background-color: #f3761b"></span>
+                <p>10</p>
+            </div>
+            <div><span style="background-color: #fca50a"></span>
+                <p>12</p>
+            </div>
+            <div><span style="background-color: #f6d543"></span>
+                <p>14</p>
+            </div>
+            <div><span style="background-color: #fcffa4"></span>
+                <p>16</p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div id='title' class="title">
+        <h1>Last 24-h weather in Spain</h1>
+        <h3>Data: <a href="http://opendata.aemet.es/">AEMET OpenData</a></h3>
+    </div>
+
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoienVtb2RlbHN1ciIsImEiOiJja2k0Z2Z2c2owOGlrMnFwYnR6aWgwYTRxIn0.fl4HqrLZncNLTtGhsK4P2w'; // replace this with your access token
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/zumodelsur/cl5uxn7p1000r14pbe1gus33c', // replace this with your style URL
+            center: [-7, 37],
+            zoom: 3.5,
+        });
+        // code from the next step will go here
+        map.on('click', function (e) {
+            var features = map.queryRenderedFeatures(e.point, {
+                layers: ['prec', 'tmax', 'tmin', 'temp', 'rel hum', 'max wind', 'mean wind', 'insol'] // replace this with the name of the layer
+            });
+
+            if (!features.length) {
+                return;
+            }
+            function checknull(value) {
+                return (value == 'null') ? "--" : value
+            }
+            var feature = features[0];
+
+            var popup = new mapboxgl.Popup({ offset: [0, -15] })
+                .setLngLat(feature.geometry.coordinates)
+                .setHTML('<h3>' + feature.properties.name + '</h3>' + '<br>' + 'prec: ' + checknull(feature.properties.prec) + ' mm'
+                    + '<br>' + 'tmax: ' + checknull(feature.properties.tmax) + ' &#176C'
+                    + '<br>' + 'tmin: ' + checknull(feature.properties.tmin) + ' &#176C'
+                    + '<br>' + 'temp: ' + checknull(feature.properties.temp) + ' &#176C'
+                    + '<br>' + 'rel. hum.: ' + checknull(feature.properties.hrmean) + ' %'
+                    + '<br>' + 'max wind spd: ' + checknull(feature.properties.vmax) + ' km/h'
+                    + '<br>' + 'mean wind spd: ' + checknull(feature.properties.vvmean) + ' km/h'
+                    + '<br>' + 'insol hours: ' + checknull(feature.properties.insol) + ' h'
+                    + '<br>' + "<p style='font-size: 0.8em;'>" + 'last update: ' + feature.properties.last_update + "</p>")
+                .addTo(map);
+        });
+
+
+
+
+        map.on('load', function () {
+            var url = 'http://meteorologia.uib.es/last24hrs/AEMET.geojson';
+            map.addSource('AEMET', { type: 'geojson', data: url });
+
+            map.loadImage('https://dargueso.github.io/webhourlydata/wind-arrow_south.png', function (error, image) {
+                if (error) throw error;
+                // add image to the active style and make it SDF-enabled
+                map.addImage('wind-arrow2', image, { sdf: true });
+            });
+            map.addLayer({
+                'id': 'max wind',
+                'type': 'symbol',
+                'source': 'AEMET',
+                'layout': {
+                    "icon-image": "wind-arrow2",// make layer invisible by default
+                    'visibility': 'none',
+                    'icon-allow-overlap': true,
+                    "icon-rotate": ["get", "dmax"],
+                    'icon-size': ['interpolate', ['linear'], ['zoom'], 1, 0.02, 15, 1],
+                },
+                'paint': {
+                    'icon-opacity': 0.7,
+                    'icon-color': [
+                        "interpolate",
+                        ["exponential", 1],
+                        ["get", "vmax"],
+                        0, '#5e4fa2',
+                        5, '#3880b9',
+                        10, '#58b2ac',
+                        15, '#8fd2a4',
+                        20, '#c6e89f',
+                        25, '#eef8a4',
+                        30, '#fff8b4',
+                        35, '#fedc88',
+                        40, '#fdb163',
+                        50, '#f67a49',
+                        60, '#df4e4b',
+                        70, '#b81e48',
+                        80, '#9e0142',
+
+                    ],
+                },
+                'filter': ['==', '$type', 'Point'],
+                'filter': ['!=', ["get", "vmax"], null]
+            });
+            map.addLayer({
+                'id': 'mean wind',
+                'type': 'symbol',
+                'source': 'AEMET',
+                'layout': {
+                    "icon-image": "wind-arrow2",// make layer invisible by default
+                    'visibility': 'none',
+                    'icon-allow-overlap': true,
+                    "icon-rotate": ["get", "vdir"],
+                    'icon-size': ['interpolate', ['linear'], ['zoom'], 1, 0.02, 15, 1],
+
+                },
+                'paint': {
+                    'icon-opacity': 0.7,
+                    'icon-color': [
+                        "interpolate",
+                        ["exponential", 1],
+                        ["get", "vvmean"],
+                        0, '#5e4fa2',
+                        2, '#3880b9',
+                        4, '#58b2ac',
+                        6, '#8fd2a4',
+                        8, '#c6e89f',
+                        10, '#eef8a4',
+                        12, '#fff8b4',
+                        14, '#fedc88',
+                        16, '#fdb163',
+                        18, '#f67a49',
+                        20, '#df4e4b',
+                        25, '#b81e48',
+                        30, '#9e0142',
+
+                    ],
+                },
+                'filter': ['==', '$type', 'Point'],
+                'filter': ['!=', ["get", "vvmean"], null]
+            });
+            map.addLayer({
+                'id': 'insol',
+                'type': 'circle',
+                'source': 'AEMET',
+                'layout': {
+                    // make layer invisible by default
+                    'visibility': 'none'
+                },
+                'paint': {
+                    "circle-color": [
+                        "interpolate",
+                        ["exponential", 1],
+                        ["get", "insol"],
+                        0, '#160b39',
+                        1, '#420a68',
+                        2, '#6a176e',
+                        4, '#932667',
+                        6, '#ba3655',
+                        8, '#dd513a',
+                        10, '#f3761b',
+                        12, '#fca50a',
+                        14, '#f6d543',
+                        16, '#fcffa4',
+                    ],
+                    "circle-opacity": 0.6,
+                    "circle-radius": ['interpolate', ['linear'], ['zoom'], 0, 2, 16, 20],
+                    "circle-stroke-color": [
+                        "interpolate",
+                        ["exponential", 1],
+                        ["get", "insol"],
+                        0, '#160b39',
+                        1, '#420a68',
+                        2, '#6a176e',
+                        4, '#932667',
+                        6, '#ba3655',
+                        8, '#dd513a',
+                        10, '#f3761b',
+                        12, '#fca50a',
+                        14, '#f6d543',
+                        16, '#fcffa4',
+                    ],
+                    "circle-stroke-width": 1.5
+                },
+                'filter': ['==', '$type', 'Point'],
+                'filter': ['!=', ["get", "insol"], null],
+            });
+
+            map.addLayer({
+                'id': 'prec',
+                'type': 'circle',
+                'source': 'AEMET',
+                'layout': {
+                    // make layer invisible by default
+                    'visibility': 'visible'
+                },
+                'paint': {
+                    "circle-color": [
+                        "interpolate",
+                        ["exponential", 1],
+                        ["get", "prec"],
+                        0, '#ffffd9',
+                        1, '#f1faba',
+                        2, '#d6efb3',
+                        4, '#abdeb7',
+                        6, '#73c8bd',
+                        8, '#42b6c4',
+                        10, '#2498c1',
+                        15, '#2073b2',
+                        20, '#234da0',
+                        25, '#203089',
+                        30, '#081d58',
+                        40, '#090858',
+                        50, '#261061',
+                    ],
+                    "circle-opacity": 0.6,
+                    "circle-radius": ['interpolate', ['linear'], ['zoom'], 0, 2, 16, 20],
+                    "circle-stroke-color": [
+                        "interpolate",
+                        ["exponential", 1],
+                        ["get", "prec"],
+                        0, '#ffffd9',
+                        1, '#f1faba',
+                        2, '#d6efb3',
+                        4, '#abdeb7',
+                        6, '#73c8bd',
+                        8, '#42b6c4',
+                        10, '#2498c1',
+                        15, '#2073b2',
+                        20, '#234da0',
+                        25, '#203089',
+                        30, '#081d58',
+                        40, '#090858',
+                        50, '#261061',
+                    ],
+                    "circle-stroke-width": 1.5
+                },
+                'filter': ['!=', ["get", "prec"], null],
+                'filter': ['==', '$type', 'Point']
+            });
+
+            map.addLayer({
+                'id': 'prec_num',
+                'type': 'symbol',
+                'source': 'AEMET',
+                'minzoom': 6,
+                'layout': {
+                    'visibility': 'visible',
+                    'text-field': ['get', 'prec'],
+                    'text-size': [
+                        'interpolate',
+                        ['exponential', 2],
+                        ['zoom'],
+                        6, 10, // let's assume this == 18
+                        25, 20 // let's assume this == 300 (exceeds the 255 limit)
+                    ]
+                },
+                'filter': ['!=', ["get", "prec"], null],
+                'filter': ['==', '$type', 'Point']
+            });
+            map.addLayer({
+                'id': 'rel hum',
+                'type': 'circle',
+                'source': 'AEMET',
+                'layout': {
+                    // make layer invisible by default
+                    'visibility': 'none'
+                },
+                'paint': {
+                    "circle-color": [
+                        "interpolate",
+                        ["exponential", 1],
+                        ["get", "hrmean"],
+                        0, '#ffffd9',
+                        10, '#f1faba',
+                        20, '#d6efb3',
+                        30, '#abdeb7',
+                        40, '#73c8bd',
+                        50, '#42b6c4',
+                        60, '#2498c1',
+                        70, '#2073b2',
+                        80, '#234da0',
+                        90, '#203089',
+                        100, '#081d58',
+                    ],
+                    "circle-opacity": 0.6,
+                    "circle-radius": ['interpolate', ['linear'], ['zoom'], 0, 2, 16, 20],
+                    "circle-stroke-color": [
+                        "interpolate",
+                        ["exponential", 1],
+                        ["get", "hrmean"],
+                        0, '#ffffd9',
+                        10, '#f1faba',
+                        20, '#d6efb3',
+                        30, '#abdeb7',
+                        40, '#73c8bd',
+                        50, '#42b6c4',
+                        60, '#2498c1',
+                        70, '#2073b2',
+                        80, '#234da0',
+                        90, '#203089',
+                        100, '#081d58',
+                    ],
+                    "circle-stroke-width": 1.5
+                },
+                'filter': ['!=', ["get", "hrmean"], null],
+                'filter': ['==', '$type', 'Point']
+            });
+
+            map.addLayer({
+                'id': 'tmax',
+                'type': 'circle',
+                'source': 'AEMET',
+                'layout': {
+                    // make layer invisible by default
+                    'visibility': 'none'
+                },
+                'paint': {
+                    "circle-color": [
+                        "interpolate",
+                        ["exponential", 1],
+                        ["get", "tmax"],
+                        16, '#5e4fa2',
+                        18, '#3880b9',
+                        20, '#58b2ac',
+                        22, '#8fd2a4',
+                        24, '#c6e89f',
+                        26, '#eef8a4',
+                        28, '#fff8b4',
+                        30, '#fedc88',
+                        32, '#fdb163',
+                        34, '#f67a49',
+                        36, '#df4e4b',
+                        38, '#b81e48',
+                        40, '#9e0142'
+                    ],
+                    "circle-opacity": 0.6,
+                    "circle-radius": ['interpolate', ['linear'], ['zoom'], 0, 2, 16, 20],
+                    "circle-stroke-color": [
+                        "interpolate",
+                        ["exponential", 1],
+                        ["get", "tmax"],
+                        16, '#5e4fa2',
+                        18, '#3880b9',
+                        20, '#58b2ac',
+                        22, '#8fd2a4',
+                        24, '#c6e89f',
+                        26, '#eef8a4',
+                        28, '#fff8b4',
+                        30, '#fedc88',
+                        32, '#fdb163',
+                        34, '#f67a49',
+                        36, '#df4e4b',
+                        38, '#b81e48',
+                        40, '#9e0142'
+                    ],
+                    "circle-stroke-width": 1.5
+                },
+                'filter': ['!=', ["get", "tmax"], null],
+                'filter': ['==', '$type', 'Point']
+            });
+
+            map.addLayer({
+                'id': 'tmax_num',
+                'type': 'symbol',
+                'source': 'AEMET',
+                'minzoom': 6,
+                'layout': {
+                    'visibility': 'none',
+                    'text-field': ['get', 'tmax'],
+                    'text-size': [
+                        'interpolate',
+                        ['exponential', 2],
+                        ['zoom'],
+                        6, 10, // let's assume this == 18
+                        25, 20 // let's assume this == 300 (exceeds the 255 limit)
+                    ]
+                },
+                'filter': ['!=', ["get", "tmax"], null],
+                'filter': ['==', '$type', 'Point']
+            });
+            map.addLayer({
+                'id': 'tmin',
+                'type': 'circle',
+                'source': 'AEMET',
+                'layout': {
+                    // make layer invisible by default
+                    'visibility': 'none'
+                },
+                'paint': {
+                    "circle-color": [
+                        "interpolate",
+                        ["exponential", 1],
+                        ["get", "tmin"],
+                        0, '#5e4fa2',
+                        2, '#3880b9',
+                        4, '#58b2ac',
+                        6, '#8fd2a4',
+                        8, '#c6e89f',
+                        10, '#eef8a4',
+                        12, '#fff8b4',
+                        14, '#fedc88',
+                        16, '#fdb163',
+                        18, '#f67a49',
+                        20, '#df4e4b',
+                        22, '#b81e48',
+                        24, '#9e0142'
+                    ],
+                    "circle-opacity": 0.6,
+                    "circle-radius": ['interpolate', ['linear'], ['zoom'], 0, 2, 16, 20],
+                    "circle-stroke-color": [
+                        "interpolate",
+                        ["exponential", 1],
+                        ["get", "tmin"],
+                        0, '#5e4fa2',
+                        2, '#3880b9',
+                        4, '#58b2ac',
+                        6, '#8fd2a4',
+                        8, '#c6e89f',
+                        10, '#eef8a4',
+                        12, '#fff8b4',
+                        14, '#fedc88',
+                        16, '#fdb163',
+                        18, '#f67a49',
+                        20, '#df4e4b',
+                        22, '#b81e48',
+                        24, '#9e0142'
+                    ],
+                    "circle-stroke-width": 1.5
+                },
+                'filter': ['!=', ["get", "tmin"], null],
+                'filter': ['==', '$type', 'Point']
+            });
+            map.addLayer({
+                'id': 'tmin_num',
+                'type': 'symbol',
+                'source': 'AEMET',
+                'minzoom': 6,
+                'layout': {
+                    'visibility': 'none',
+                    'text-field': ['get', 'tmin'],
+                    'text-size': [
+                        'interpolate',
+                        ['exponential', 2],
+                        ['zoom'],
+                        6, 10, // let's assume this == 18
+                        25, 20 // let's assume this == 300 (exceeds the 255 limit)
+                    ]
+                },
+                'filter': ['!=', ["get", "tmin"], null],
+                'filter': ['==', '$type', 'Point']
+            });
+            map.addLayer({
+                'id': 'temp',
+                'type': 'circle',
+                'source': 'AEMET',
+                'layout': {
+                    // make layer invisible by default
+                    'visibility': 'none'
+                },
+                'paint': {
+                    "circle-color": [
+                        "interpolate",
+                        ["exponential", 1],
+                        ["get", "temp"],
+                        16, '#5e4fa2',
+                        18, '#3880b9',
+                        20, '#58b2ac',
+                        22, '#8fd2a4',
+                        24, '#c6e89f',
+                        26, '#eef8a4',
+                        28, '#fff8b4',
+                        30, '#fedc88',
+                        32, '#fdb163',
+                        34, '#f67a49',
+                        36, '#df4e4b',
+                        38, '#b81e48',
+                        40, '#9e0142'
+                    ],
+                    "circle-opacity": 0.6,
+                    "circle-radius": ['interpolate', ['linear'], ['zoom'], 0, 2, 16, 20],
+                    "circle-stroke-color": [
+                        "interpolate",
+                        ["exponential", 1],
+                        ["get", "temp"],
+                        16, '#5e4fa2',
+                        18, '#3880b9',
+                        20, '#58b2ac',
+                        22, '#8fd2a4',
+                        24, '#c6e89f',
+                        26, '#eef8a4',
+                        28, '#fff8b4',
+                        30, '#fedc88',
+                        32, '#fdb163',
+                        34, '#f67a49',
+                        36, '#df4e4b',
+                        38, '#b81e48',
+                        40, '#9e0142'
+                    ],
+                    "circle-stroke-width": 1.5
+                },
+                'filter': ['!=', ["get", "temp"], null],
+                'filter': ['==', '$type', 'Point']
+            });
+            map.addLayer({
+                'id': 'temp_num',
+                'type': 'symbol',
+                'source': 'AEMET',
+                'minzoom': 6,
+                'layout': {
+                    'visibility': 'none',
+                    'text-field': ['get', 'temp'],
+                    'text-size': [
+                        'interpolate',
+                        ['exponential', 2],
+                        ['zoom'],
+                        6, 10, // let's assume this == 18
+                        25, 20 // let's assume this == 300 (exceeds the 255 limit)
+                    ]
+                },
+                'filter': ['!=', ["get", "temp"], null],
+                'filter': ['==', '$type', 'Point']
+            });
+
+            // map.addLayer({
+            // 'id': 'Stations_white',
+            // 'type': 'circle',
+            // 'source': 'AEMET',
+            // 'layout': {
+            //                 // make layer invisible by default
+            //                 'visibility': 'visible'
+            //             },
+            // 'paint': {
+            //     "circle-color":'#fff',
+            //     "circle-opacity": 0.6,
+            //     "circle-radius": 2,
+            //     "circle-stroke-color":'#fff',
+            //     "circle-stroke-width": 0.5
+            // },
+            // });
+            map.addLayer({
+                'id': 'Stations_black',
+                'type': 'circle',
+                'source': 'AEMET',
+                'maxzoom': 6,
+                'layout': {
+                    // make layer invisible by default
+                    'visibility': 'visible'
+                },
+                'paint': {
+                    "circle-color": '#000000',
+                    "circle-opacity": 0.8,
+                    "circle-radius": 1,
+                    "circle-stroke-color": '#000000',
+                    "circle-stroke-width": 0.5
+                },
+            });
+        });
+
+        // enumerate ids of the layers
+        var toggleableLayerIds = ['prec', 'tmax', 'tmin', 'temp', 'rel hum', 'max wind', 'mean wind', 'insol'];
+
+        // set up the corresponding toggle button for each layer
+        for (var i = 0; i < toggleableLayerIds.length; i++) {
+            var id = toggleableLayerIds[i];
+            var link = document.createElement('a');
+            link.href = '#';
+            if (id == 'prec') {
+                link.className = 'active';
+            }
+            else {
+                link.className = '';
+            }
+            link.textContent = id;
+
+            link.onclick = function (e) {
+                var clickedLayer = this.textContent;
+                e.preventDefault();
+                e.stopPropagation();
+                for (var j = 0; j < toggleableLayerIds.length; j++) {
+                    if (clickedLayer === toggleableLayerIds[j]) {
+                        layers.children[j].className = 'active';
+                        map.setLayoutProperty(toggleableLayerIds[j], 'visibility', 'visible');
+                        map.setLayoutProperty(toggleableLayerIds[j] + "_num", 'visibility', 'visible');
+                        // map.setLayoutProperty('Stations_black', 'visibility', 'visible');
+                        document.getElementById(toggleableLayerIds[j] + "-legend").style.display = "flex";
+                    }
+                    else {
+                        layers.children[j].className = '';
+                        map.setLayoutProperty(toggleableLayerIds[j], 'visibility', 'none');
+                        map.setLayoutProperty(toggleableLayerIds[j] + "_num", 'visibility', 'none');
+                        // map.setLayoutProperty('Stations_white', 'visibility', 'none');
+                        document.getElementById(toggleableLayerIds[j] + "-legend").style.display = "";
+                    }
+                }
+            };
+
+
+            map.on('mousemove', 'prec', (e) => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+            map.on("mouseleave", 'prec', function () {
+                map.getCanvas().style.cursor = '';
+            });
+
+            map.on('mousemove', 'tmax', (e) => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+            map.on("mouseleave", 'tmax', function () {
+                map.getCanvas().style.cursor = '';
+            });
+
+            map.on('mousemove', 'tmin', (e) => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+            map.on("mouseleave", 'tmin', function () {
+                map.getCanvas().style.cursor = '';
+            });
+
+            map.on('mousemove', 'temp', (e) => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+            map.on("mouseleave", 'temp', function () {
+                map.getCanvas().style.cursor = '';
+            });
+
+            map.on('mousemove', 'rel hum', (e) => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+            map.on("mouseleave", 'rel hum', function () {
+                map.getCanvas().style.cursor = '';
+            });
+
+            map.on('mousemove', 'max wind', (e) => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+            map.on("mouseleave", 'max wind', function () {
+                map.getCanvas().style.cursor = '';
+            });
+
+            map.on('mousemove', 'mean wind', (e) => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+            map.on("mouseleave", 'mean wind', function () {
+                map.getCanvas().style.cursor = '';
+            });
+
+            map.on('mousemove', 'insol', (e) => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+            map.on("mouseleave", 'insol', function () {
+                map.getCanvas().style.cursor = '';
+            });
+            // link.onclick = function (e) {
+            // var clickedLayer = this.textContent;
+            // e.preventDefault();
+            // e.stopPropagation();
+            //
+            // var visibility = map.getLayoutProperty(clickedLayer, 'visibility');
+            //
+            // // toggle layer visibility by changing the layout object's visibility property
+            // if (visibility === 'visible') {
+            // map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+            // this.className = '';
+            // } else {
+            // this.className = 'active';
+            // map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
+            // }
+            // };
+
+            var layers = document.getElementById('menu');
+            layers.appendChild(link);
+        }
+    </script>
+</body>
+
+</html>
+
+<!-- // Create the popup
+map.on('click', 'turnstileData', function (e) {
+    var entriesDiff = e.features[0].properties.ENTRIES_DIFF;
+    var entries_06 = e.features[0].properties.ENTRIES_06;
+    var entries_20 = e.features[0].properties.ENTRIES_20;
+    var stationName = e.features[0].properties.stationName;
+    new mapboxgl.Popup()
+        .setLngLat(e.lngLat)
+        .setHTML(stationName + '<br>' + entriesDiff + '%' + '<br>' + entries_06 + '<br>' + entries_20)
+        .addTo(map);
+});
+// Change the cursor to a pointer when the mouse is over the turnstileData layer.
+map.on('mouseenter', 'turnstileData', function () {
+    map.getCanvas().style.cursor = 'pointer';
+});
+// Change it back to a pointer when it leaves.
+map.on('mouseleave', 'turnstileData', function () {
+    map.getCanvas().style.cursor = '';
+}); -->
